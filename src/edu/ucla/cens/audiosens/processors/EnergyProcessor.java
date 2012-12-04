@@ -2,6 +2,7 @@ package edu.ucla.cens.audiosens.processors;
 
 import java.util.HashMap;
 
+import edu.ucla.cens.audiosens.helper.Features;
 import edu.ucla.cens.audiosens.helper.Logger;
 
 public class EnergyProcessor extends BaseProcessor 
@@ -13,17 +14,22 @@ public class EnergyProcessor extends BaseProcessor
 	}
 
 	@Override
-	public void process(short[] data, HashMap<String, String> options) 
+	public void process(Object data, HashMap<String, String> options) 
 	{
-		//Logger.d(LOGTAG,"Processing Energy");
 
+		short[] data_short = (short[])data;
 		long sum=0;
-		for (int i = 0; i < data.length; i++) 
+		for (int i = 0; i < data_short.length; i++) 
 		{
-			sum += data[i] * data[i];
+			sum += data_short[i] * data_short[i];
 		}
-		sum = (long)Math.sqrt(sum / data.length);
+		sum = (long)Math.sqrt(sum / data_short.length);
 		addResult(sum);
+	}
+
+	@Override
+	public void setName() {
+		setName(Features.ENERGY);
 	}
 
 }

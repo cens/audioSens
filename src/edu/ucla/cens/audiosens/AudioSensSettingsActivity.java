@@ -1,6 +1,7 @@
 package edu.ucla.cens.audiosens;
 
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
+import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.PreferencesHelper;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -54,6 +55,7 @@ public class AudioSensSettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
 			{
+				Logger.w("ONOFF CHECKED:"+isChecked);
 				if(isChecked)
 				{
 					if(!savePreferences())

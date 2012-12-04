@@ -88,7 +88,7 @@ public class CircularQueue {
 		{
 			try 
 			{
-				wait();
+				wait(100); //if nothing in 100 ms. return null
 			} 
 			catch(InterruptedException e) 
 			{

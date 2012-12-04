@@ -129,9 +129,9 @@ public class AudioSensRecorder implements Runnable
 			processingQueue.insertData(tempBuffer, System.currentTimeMillis());
 		}
 		
+		setRecording(false);
 		recordInstance.stop();
 		recordInstance.release();
-		setRecording(false);
 		
 		Logger.d(LOGTAG, "Finished Recording, now processing");
 		

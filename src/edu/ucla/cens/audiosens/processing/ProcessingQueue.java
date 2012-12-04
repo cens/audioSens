@@ -1,8 +1,9 @@
 package edu.ucla.cens.audiosens.processing;
 
 import java.util.HashMap;
-
 import edu.ucla.cens.audiosens.AudioSensRecorder;
+import edu.ucla.cens.audiosens.classifier.BaseClassifier;
+import edu.ucla.cens.audiosens.classifier.ClassifierFactory;
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.PreferencesHelper;
@@ -24,7 +25,8 @@ public class ProcessingQueue extends Thread
 	int frameStep;
 	HashMap<String,BaseProcessor> resultMap;
 	HashMap<String,BaseWriter> writerMap;
-
+	HashMap<String,BaseClassifier> classifierMap;
+	
 	private boolean startedRecording;
 	private boolean stoppedOnce;
 
@@ -42,7 +44,8 @@ public class ProcessingQueue extends Thread
 		audioFrame = new short[frameSize];
 		resultMap = new HashMap<String,BaseProcessor>();
 		writerMap = new HashMap<String, BaseWriter>();
-
+		classifierMap = new HashMap<String, BaseClassifier>();
+		
 		//initialize the first half with zeros
 		for(int i=0; i < frameSize; i++)
 			audioFrame[i] = 0;
@@ -52,6 +55,7 @@ public class ProcessingQueue extends Thread
 			if(!resultMap.containsKey(processorName))
 			{
 				BaseProcessor processor = ProcessorFactory.build(processorName);
+				
 				if(processor != null)
 				{
 					resultMap.put(processorName, processor);
@@ -82,6 +86,24 @@ public class ProcessingQueue extends Thread
 			}
 		}
 		Logger.d(LOGTAG,"Initialized Writers");
+		
+		for(String classifierName : AudioSensConfig.CLASSIFIERS)
+		{
+			if(!classifierMap.containsKey(classifierName))
+			{
+				BaseClassifier classifier = ClassifierFactory.build(classifierName);
+				if(classifier != null)
+				{
+					classifier.initialize();
+					classifierMap.put(classifierName, classifier);
+				}
+				else
+				{
+					Logger.e(LOGTAG, "Cannot create Classifier for " + classifierName);
+				}
+			}
+		}
+		Logger.d(LOGTAG,"Initialized Classifiers");
 
 	}
 
@@ -92,7 +114,7 @@ public class ProcessingQueue extends Thread
 		stoppedOnce = false;
 		while(!queue.emptyq() || obj.isRecording())
 		{
-			Logger.d(LOGTAG,"Start of Processing Data Frame");
+			Logger.d(LOGTAG,"Start of Processing Data Frame:"+obj.isRecording());
 
 			if(startedRecording && !obj.mSettings.getBoolean(PreferencesHelper.RECORDSTATUS, true))
 			{
@@ -117,11 +139,15 @@ public class ProcessingQueue extends Thread
 			}
 
 			audioFromQueueData = (AudioData)(queue.deleteAndHandleData());
+			if(audioFromQueueData == null)
+				continue;
+			
 			System.arraycopy(audioFromQueueData.data, 0, audioFrame, frameStep, frameStep);
-
+			
 			for(BaseProcessor processor : resultMap.values())
 			{
 				processor.process(audioFrame);
+				
 				Logger.d(LOGTAG, "Processing frame : "+processor.framesPending+"/"+queue.getQSize());
 				if(AudioSensConfig.DATAFRAMELIMITON )
 				{
@@ -132,15 +158,23 @@ public class ProcessingQueue extends Thread
 				}
 			}
 			Logger.d(LOGTAG, "End of Processing Loop");
+			
+			for(BaseClassifier classifier : classifierMap.values())
+			{
+				//processor.process(audioFrame);
+				classifier.classify(resultMap);
+			}
 
 		}
 		
 		Logger.d(LOGTAG,"FinishedProcessingQueue");
+		Logger.d(LOGTAG,"FinishedProcessingQueue2");
 
 	}
 
 	public void writeData()
 	{
+		Logger.d(LOGTAG,"In writeData");
 		for(BaseWriter writer : writerMap.values())
 		{
 			for(BaseProcessor processor : resultMap.values())

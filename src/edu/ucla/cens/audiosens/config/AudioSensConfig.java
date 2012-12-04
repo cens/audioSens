@@ -1,12 +1,13 @@
 package edu.ucla.cens.audiosens.config;
 
+import edu.ucla.cens.audiosens.helper.Features;
 import android.media.AudioFormat;
 
 public final class AudioSensConfig 
 {
 	//Initial Settings
-	public final static int PERIOD = 60;
-	public final static int DURATION = 10;
+	public final static int PERIOD = 5;
+	public final static int DURATION = 1;
 	
 	//AutoStart
 	public final static boolean AUTOSTART = true;
@@ -19,11 +20,18 @@ public final class AudioSensConfig
 	public final static int ENCODINGTYPE = AudioFormat.ENCODING_PCM_16BIT;
 	public final static int FREQUENCY = 8000;
 	
+	//Frequency Mode
+	public final static boolean FREQUENCYFEATURES = true;
+	
 	//Features
-	public final static String[] FEATURES = {"Energy","ZeroCrossingRate"};
+	public final static String[] FEATURES = {Features.ENERGY,
+											Features.SPEECHINFERENCEFEATURES};
 	
 	//Writers
 	public final static String[] DATAWRITERS = {"AndroidLog"};
+	
+	//Classifiers
+	public final static String[] CLASSIFIERS = {"VoiceActivityDetection"};
 	
 	//Intents
 	public final static String STATUSRECEIVERTAG = "statusReceiverIntent";

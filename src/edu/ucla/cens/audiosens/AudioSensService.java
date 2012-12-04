@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -53,7 +54,7 @@ public class AudioSensService extends Service {
 	public void onCreate() 
 	{
 		super.onCreate();
-		Logger.d(LOGTAG,"Service OnCreate");
+		Logger.d(LOGTAG,"Service OnCreate:");
 		
 		mSettings = PreferenceManager.getDefaultSharedPreferences(this);
 		mEditor = mSettings.edit();
@@ -78,6 +79,7 @@ public class AudioSensService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)	
 	{
+		Logger.i(LOGTAG,"In Start Command");
 		if (intent != null) 
 		{ 
 			String action = intent.getAction();
@@ -87,16 +89,14 @@ public class AudioSensService extends Service {
 				{
 					Logger.d(LOGTAG,"Alarm Received");
 					loadFromSharedPreferences();
-					startRecording();
-					//TODO check
-					/*Thread t = new Thread()
+					Thread t = new Thread()
 					{
 						public void run()
 						{
 							startRecording();
 						}
 					};
-					t.start();*/
+					t.start();
 				}
 				else if(action.equals(AudioSensConfig.AUTOSTART_TAG)) 
 				{
@@ -105,17 +105,16 @@ public class AudioSensService extends Service {
 					loadFromSharedPreferences();
 					long now = SystemClock.elapsedRealtime();
 					mAlarmManager.cancel(mScanSender);
-					mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, period, mScanSender);
+					mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, period * 1000, mScanSender);
 				}
 			}
 			else
 			{
-				Logger.d(LOGTAG,"Null Intent received");
-
 				loadFromSharedPreferences();
+				Logger.i(LOGTAG,"Null Intent received, Setting alarm for"+period);
 				long now = SystemClock.elapsedRealtime();
 				mAlarmManager.cancel(mScanSender);
-				mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, period, mScanSender);
+				mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, period * 1000, mScanSender);
 			}
 		}
 		
@@ -126,15 +125,17 @@ public class AudioSensService extends Service {
 	@Override
 	public void onDestroy() 
 	{
-		Logger.d(LOGTAG,"Service Destroyed¶");
+		Logger.d(LOGTAG,"Service Destroyed");
 
-		if(mSettings.getBoolean(PreferencesHelper.RECORDSTATUS, false))
+		if(mSettings.getBoolean(PreferencesHelper.ENABLED, false))
 		{
 			forceStopRecording();
 		}
-		
-		mEditor.putBoolean(PreferencesHelper.ENABLED, false);
-		mEditor.commit();
+		else
+		{
+			mEditor.putBoolean(PreferencesHelper.ENABLED, false);
+			mEditor.commit();
+		}
 		
 		mAlarmManager.cancel(mScanSender);
 		cancelAllNotifications();
@@ -240,7 +241,7 @@ public class AudioSensService extends Service {
 	
 	private void cancelAllNotifications()
 	{
-		notificationManager.cancel(TAG,1);
+		notificationManager.cancelAll();
 	}
 	
 	private void acquireWakeLock()
@@ -264,10 +265,11 @@ public class AudioSensService extends Service {
 	}
 	
 	
-	//load localvariables from SharedPreferences
+	//load local variables from SharedPreferences
 	private void loadFromSharedPreferences()
 	{
 		period = mSettings.getInt(PreferencesHelper.PERIOD, AudioSensConfig.PERIOD);
 		duration = mSettings.getInt(PreferencesHelper.DURATION, AudioSensConfig.DURATION);
 	}
+
 }
