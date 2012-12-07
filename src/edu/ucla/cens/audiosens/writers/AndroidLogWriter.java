@@ -1,10 +1,16 @@
 package edu.ucla.cens.audiosens.writers;
 
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.ucla.cens.audiosens.helper.JSONHelper;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.processors.BaseProcessor;
+import edu.ucla.cens.audiosens.sensors.BaseSensor;
 
 public class AndroidLogWriter extends BaseWriter {
 	
@@ -24,27 +30,36 @@ public class AndroidLogWriter extends BaseWriter {
 	}
 
 	@Override
-	public void write(BaseProcessor processor) 
+	public void write(BaseProcessor processor, long frameNo) 
 	{
 		Logger.d(LOGTAG,"Writing in AndroidLogWriter");
-
-		processor.framesPending = 0;
-		//writePerProcessor(processor);
-		writePerFeature(processor);
-		
+		writePerFeature(processor, frameNo);
 	}
 	
-	private void writePerProcessor(BaseProcessor processor)
+	@Override
+	public void writeSensors(HashMap<String, BaseSensor> sensorMap, long frameNo) 
 	{
-		Logger.i(LOGTAG, processor.getJSONResults().toString());
+		JSONObject tempJson = JSONHelper.buildSensorJson(sensorMap, frameNo);
+		if(tempJson != null)
+			Logger.i(LOGTAG, tempJson.toString());
 	}
 	
-	private void writePerFeature(BaseProcessor processor)
+	private void writePerProcessor(BaseProcessor processor, long frameNo)
 	{
-		for(JSONObject jsonObject : processor.getJSONResultsArrayList())
+		JSONObject tempJson = processor.getJSONResults(frameNo);
+		if (tempJson != null)
+			Logger.i(LOGTAG, tempJson.toString());
+	}
+	
+	private void writePerFeature(BaseProcessor processor, long frameNo)
+	{
+		for(JSONObject jsonObject : processor.getJSONResultsArrayList(frameNo))
 		{
-			Logger.i(LOGTAG, jsonObject.toString());
+			if (jsonObject != null)
+				Logger.i(LOGTAG, jsonObject.toString());
 		}
 	}
+
+
 
 }

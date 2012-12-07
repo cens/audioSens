@@ -2,7 +2,7 @@ package edu.ucla.cens.audiosens.processors;
 
 import java.util.HashMap;
 
-import edu.ucla.cens.audiosens.helper.Features;
+import edu.ucla.cens.audiosens.helper.FeaturesList;
 import edu.ucla.cens.audiosens.helper.Logger;
 
 public class EnergyProcessor extends BaseProcessor 
@@ -29,7 +29,7 @@ public class EnergyProcessor extends BaseProcessor
 
 	@Override
 	public void setName() {
-		setName(Features.ENERGY);
+		setName(FeaturesList.ENERGY);
 	}
 
 }

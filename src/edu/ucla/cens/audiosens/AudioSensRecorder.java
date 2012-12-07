@@ -1,13 +1,16 @@
 package edu.ucla.cens.audiosens;
 
+import java.util.HashMap;
+
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
 import edu.ucla.cens.audiosens.helper.Logger;
+import edu.ucla.cens.audiosens.processing.AudioData.Flag;
 import edu.ucla.cens.audiosens.processing.ProcessingQueue;
+import edu.ucla.cens.audiosens.sensors.BaseSensor;
 import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 public class AudioSensRecorder implements Runnable
@@ -21,6 +24,7 @@ public class AudioSensRecorder implements Runnable
 	private AudioSensService obj;	//reference to the calling service
 	private AudioRecord recordInstance;
 	ProcessingQueue processingQueue;
+	boolean continuousMode;
 	
 	int duration;	//length of recording
 	int frameSize;	//size of frame
@@ -34,24 +38,34 @@ public class AudioSensRecorder implements Runnable
 	short[] tempBuffer;
 	
 	long startTime;
+	long prevWriteTime;
+	long frameNumber;
 	
 	private volatile boolean isRecording;
 	private final Object mutex = new Object();
+	
+	HashMap<String,BaseSensor> sensorMap;
 
-	public AudioSensRecorder(AudioSensService obj, int duration)
+	
+	/*
+	 * Constructor for normal mode
+	 */
+	public AudioSensRecorder(AudioSensService obj, int duration, boolean continuousMode)
 	{
 		this.obj = obj;
+		sensorMap = obj.sensorMap;
 		
 		//Preferences
 		mSettings = PreferenceManager.getDefaultSharedPreferences(obj);
 		mEditor = mSettings.edit();
 		
 		this.duration = duration; 
+		this.continuousMode = continuousMode;
 		frameSize = AudioSensConfig.FRAMELENGTH * 8;
 		frameStep = (int)frameSize/2;
 		framePeriod = frameStep;
 		
-		processingQueue = new ProcessingQueue(this, frameSize, frameStep);
+		processingQueue = new ProcessingQueue(this, frameSize, frameStep, continuousMode);
 		
 		initializeAudioParameters();
 
@@ -81,7 +95,9 @@ public class AudioSensRecorder implements Runnable
 		
 		// Allocate Recorder and Start Recording…
 		bufferRead = 0;
-		startTime = SystemClock.elapsedRealtime();
+		startTime = System.currentTimeMillis();
+		prevWriteTime = startTime;
+		frameNumber = startTime;
 
 		recordInstance = new AudioRecord(
 				MediaRecorder.AudioSource.MIC,
@@ -126,7 +142,16 @@ public class AudioSensRecorder implements Runnable
 			{
 				throw new IllegalStateException("read() returned AudioRecord.ERROR_INVALID_OPERATION");
 			}
-			processingQueue.insertData(tempBuffer, System.currentTimeMillis());
+			processingQueue.insertData(tempBuffer, System.currentTimeMillis(),Flag.NORMAL);
+			if(continuousMode)
+			{
+				if(forceWrite())
+				{
+					Logger.e(LOGTAG,"ForceWriting");
+					processingQueue.forceWrite();
+					prevWriteTime = System.currentTimeMillis();
+				}
+			}
 		}
 		
 		setRecording(false);
@@ -155,8 +180,26 @@ public class AudioSensRecorder implements Runnable
 	
 	private boolean continueRecording()
 	{
-		if(isRecording && (SystemClock.elapsedRealtime() - startTime) < duration * 1000)
+		if(isRecording)
+		{
+			if(continuousMode)
+			{
+				return true;
+			}
+			else if((System.currentTimeMillis() - startTime) < duration * 1000)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean forceWrite()	
+	{
+		if((System.currentTimeMillis() - prevWriteTime) > AudioSensConfig.CONTINUOUSMODE_FLUSHTIME * 1000)
+		{
 			return true;
+		}
 		return false;
 	}
 	
@@ -180,9 +223,24 @@ public class AudioSensRecorder implements Runnable
 		}
 	}
 	
+	public long getFrameNo()
+	{
+		return frameNumber;
+	}
+	
+	public void setFrameNo()
+	{
+		frameNumber = System.currentTimeMillis();
+	}
+	
+	public HashMap<String, BaseSensor> getSensorMap()
+	{
+		return sensorMap;
+	}
+	
 	private void initializeAudioParameters()
 	{
-		//Initialiazing Audio Parameters
+		//Initializing Audio Parameters
 		if (AudioSensConfig.ENCODINGTYPE == AudioFormat.ENCODING_PCM_16BIT)
 			bSamples = 16;
 		else

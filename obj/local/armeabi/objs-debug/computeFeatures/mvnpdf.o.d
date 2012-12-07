@@ -1,16 +1,13 @@
-obj/local/armeabi/objs-debug/computeFeatures/kiss_fftr.o: jni/kiss_fftr.c \
- jni/kiss_fftr.h jni/kiss_fft.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdlib.h \
+obj/local/armeabi/objs-debug/computeFeatures/mvnpdf.o: jni/mvnpdf.c \
+ jni/mvnpdf.h \
+ /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/android/log.h \
+ /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdio.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/cdefs.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/cdefs_elf.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/string.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/malloc.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/alloca.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/strings.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/types.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdint.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/_types.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/_types.h \
+ /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/types.h \
+ /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdint.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/linux/posix_types.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/linux/stddef.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/linux/compiler.h \
@@ -19,42 +16,31 @@ obj/local/armeabi/objs-debug/computeFeatures/kiss_fftr.o: jni/kiss_fftr.c \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/linux/types.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/kernel.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/memory.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdio.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/math.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/limits.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/limits.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/linux/limits.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/internal_types.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/limits.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/syslimits.h \
- jni/_kiss_fft_guts.h
+ /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/syslimits.h
 
-jni/kiss_fftr.h:
+jni/mvnpdf.h:
 
-jni/kiss_fft.h:
+/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/android/log.h:
 
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdlib.h:
+/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdio.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/cdefs.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/cdefs_elf.h:
 
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/string.h:
+/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/_types.h:
 
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/malloc.h:
-
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/alloca.h:
-
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/strings.h:
+/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/_types.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/types.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdint.h:
-
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/_types.h:
-
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/_types.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/linux/posix_types.h:
 
@@ -72,10 +58,6 @@ jni/kiss_fft.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h:
 
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/memory.h:
-
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdio.h:
-
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/math.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/limits.h:
@@ -89,5 +71,3 @@ jni/kiss_fft.h:
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/limits.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/syslimits.h:
-
-jni/_kiss_fft_guts.h:

@@ -2,6 +2,7 @@ package edu.ucla.cens.audiosens.processors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,12 +19,15 @@ public abstract class BaseProcessor
 	protected HashMap<String,ArrayList> results;
 	private String[] dependencies;
 	public int framesPending;
+	public HashMap<String,Integer> framesPendingMap;
 	protected String featureName;
 	
+	@SuppressWarnings("rawtypes")
 	public BaseProcessor()
 	{
 		setName();
 		results = new HashMap<String,ArrayList>();
+		framesPendingMap = new HashMap<String, Integer>();
 		framesPending = 0;
 		initializeResults();
 	}
@@ -33,6 +37,11 @@ public abstract class BaseProcessor
 	public void setName(String featureName)
 	{
 		this.featureName = featureName; 
+	}
+	
+	public String getName()
+	{
+		return featureName; 
 	}
 	
 	public abstract void process(Object data, HashMap<String,String> options);
@@ -54,11 +63,11 @@ public abstract class BaseProcessor
 		return results;
 	}
 	
-	public JSONObject getJSONResults()
+	public JSONObject getJSONResults(long frameNo)
 	{
 		try 
 		{
-			return JSONHelper.build(results);
+			return JSONHelper.build(results, frameNo);
 		} 
 		catch (JSONException je) 
 		{
@@ -67,11 +76,11 @@ public abstract class BaseProcessor
 		}	
 	}
 	
-	public ArrayList<JSONObject> getJSONResultsArrayList()
+	public ArrayList<JSONObject> getJSONResultsArrayList(long frameNo)
 	{
 		try 
 		{
-			return JSONHelper.buildAsArrayList(results);
+			return JSONHelper.buildAsArrayList(results, frameNo);
 		} 
 		catch (JSONException je) 
 		{
@@ -86,8 +95,8 @@ public abstract class BaseProcessor
 		if(results.containsKey(featureName))
 		{
 			results.get(featureName).add(result);
+			incrementFramesPending(featureName);
 		}
-		framesPending ++;
 	}
 	
 	public void addResult(Object result)
@@ -95,9 +104,34 @@ public abstract class BaseProcessor
 		addResult(featureName, result);
 	}
 	
+	private void incrementFramesPending(String featureName)
+	{
+		int temp = 1;
+		if(framesPendingMap.containsKey(featureName))
+		{
+			temp = framesPendingMap.get(featureName);
+			temp++;
+		}
+		framesPendingMap.put(featureName, temp);
+		framesPending = temp;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	public void clearResults()
 	{
-		results.clear();
+		for(ArrayList element : results.values())
+		{
+			element.clear();
+		}
+		resetFramesPending();
+	}
+	
+	private void resetFramesPending()
+	{
+		for(Entry<String,Integer> entry : framesPendingMap.entrySet())
+		{
+			framesPendingMap.put(entry.getKey(), 0);
+		}
 	}
 	
 	public String[] getDependencies()

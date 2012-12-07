@@ -27,7 +27,7 @@ public class AudioSensSettingsActivity extends Activity {
 	ToggleButton enabledButton;
 	EditText period_et;
 	EditText duration_et;
-	CheckBox autoStart_cb;
+	CheckBox continuousMode_cb;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +42,22 @@ public class AudioSensSettingsActivity extends Activity {
 		enabledButton = (ToggleButton)findViewById(R.id.enabled_toggleButton);
 		period_et = (EditText)findViewById(R.id.period_et);
 		duration_et = (EditText)findViewById(R.id.duration_et);
-		autoStart_cb = (CheckBox)findViewById(R.id.autostart_cb);
+		continuousMode_cb = (CheckBox)findViewById(R.id.continuousmode_cb);
 		
 		enabledButton.setChecked(mSettings.getBoolean(PreferencesHelper.ENABLED, false));
 		period_et.setText(mSettings.getInt(PreferencesHelper.PERIOD, AudioSensConfig.PERIOD)+"");
 		duration_et.setText(mSettings.getInt(PreferencesHelper.DURATION, AudioSensConfig.DURATION)+"");
-		autoStart_cb.setChecked(mSettings.getBoolean(PreferencesHelper.AUTOSTART, AudioSensConfig.AUTOSTART));
+		continuousMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, AudioSensConfig.CONTINUOUSMODE_DEFAULT));
+		
+		//on Starting the activity
+		if(!enabledButton.isChecked())
+		{
+			enableDisableSettings(true);
+		}
+		else
+		{
+			enableDisableSettings(false);
+		}
 		
 		//Listener for On Off Switch
 		enabledButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() 
@@ -66,7 +76,7 @@ public class AudioSensSettingsActivity extends Activity {
 					}
 					
 					//Disable Editing
-					enableDisableView((View)findViewById(R.id.scrollView1),false);
+					enableDisableSettings(false);
 					mEditor.putBoolean(PreferencesHelper.ENABLED, true);
 					mEditor.commit();
 					
@@ -76,12 +86,30 @@ public class AudioSensSettingsActivity extends Activity {
 				else
 				{
 					//Enable Editing
-					enableDisableView((View)findViewById(R.id.scrollView1),true);
+					enableDisableSettings(true);
 					mEditor.putBoolean(PreferencesHelper.ENABLED, false);
 					mEditor.commit();
 
 					Toast.makeText(getApplicationContext(), "Recording Service Stopped", Toast.LENGTH_SHORT).show();
 					stopService(new Intent(AudioSensSettingsActivity.this, AudioSensService.class));
+				}
+			}
+		});
+		
+		//Listener for Continuous Swircg
+		continuousMode_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() 
+		{
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
+			{
+				Logger.w("CONTINUOUSRECORDING CHECKED:"+isChecked);
+				if(isChecked)
+				{
+					enableDisableNormalSettings(false);
+				}
+				else
+				{
+					enableDisableNormalSettings(true);
 				}
 			}
 		});
@@ -142,10 +170,30 @@ public class AudioSensSettingsActivity extends Activity {
 		
 		mEditor.putInt(PreferencesHelper.PERIOD, period);
 		mEditor.putInt(PreferencesHelper.DURATION, duration);
-		mEditor.putBoolean(PreferencesHelper.AUTOSTART, autoStart_cb.isChecked());
+		mEditor.putBoolean(PreferencesHelper.CONTINUOUSMODE, continuousMode_cb.isChecked());
 		mEditor.commit();
 
 		return true;
+	}
+	
+	
+	private void enableDisableSettings(boolean enabled)
+	{
+		if(enabled)
+		{
+			enableDisableView((View)findViewById(R.id.scrollView1),true);
+			if(continuousMode_cb.isChecked())
+			{
+				enableDisableNormalSettings(false);
+			}
+		}
+		else
+			enableDisableView((View)findViewById(R.id.scrollView1),false);
+	}
+	
+	private void enableDisableNormalSettings(boolean enabled)
+	{
+		enableDisableView((View)findViewById(R.id.normalMode_tl),enabled);
 	}
 	
 	/*

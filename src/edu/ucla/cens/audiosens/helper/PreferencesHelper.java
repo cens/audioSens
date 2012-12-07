@@ -8,4 +8,5 @@ public class PreferencesHelper
 	public static final String AUTOSTART = "autostart_as";
 	public static final String VERSION = "versionno_as";
 	public static final String RECORDSTATUS = "recordstatus_as";
+	public static final String CONTINUOUSMODE = "continuousmode_as";
 }

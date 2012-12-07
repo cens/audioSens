@@ -2,7 +2,7 @@ package edu.ucla.cens.audiosens.processors;
 
 import java.util.HashMap;
 
-import edu.ucla.cens.audiosens.helper.Features;
+import edu.ucla.cens.audiosens.helper.FeaturesList;
 
 public class ZeroCrossingRateProcessor extends BaseProcessor 
 {
@@ -38,7 +38,7 @@ public class ZeroCrossingRateProcessor extends BaseProcessor
 	@Override
 	public void setName() 
 	{
-		setName(Features.ZCR);
+		setName(FeaturesList.ZCR);
 	}
 
 }

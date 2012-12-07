@@ -8,28 +8,34 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.ucla.cens.audiosens.sensors.BaseSensor;
+
 public class JSONHelper {
-	
+
+	public static final String LOGTAG = "JSONHelper";
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static JSONObject build(Object inp) throws JSONException
+	public static JSONObject build(Object inp, long frameNo) throws JSONException
 	{
 		JSONObject jsonObject = new JSONObject();
 		if(inp instanceof ArrayList)
 		{
 			JSONArray jsonArray = new JSONArray((ArrayList)inp);
 			jsonObject.put("data", jsonArray);
+			jsonObject.put("frameNo", frameNo);
 		}
 		else if(inp instanceof HashMap)
 		{
 			for(Entry<String,Object> entry : ((HashMap<String,Object>)inp).entrySet())
 			{
-				jsonObject.put(entry.getKey(), build(entry.getValue()));
+				jsonObject.put(entry.getKey(), build(entry.getValue(), frameNo));
 			}
 		}
 		return jsonObject;
 	}
-	
-	public static ArrayList<JSONObject> buildAsArrayList(Object inp) throws JSONException
+
+	@SuppressWarnings("unchecked")
+	public static ArrayList<JSONObject> buildAsArrayList(Object inp, long frameNo) throws JSONException
 	{
 		ArrayList<JSONObject> op = new ArrayList<JSONObject>();
 		JSONObject jsonObject;
@@ -38,11 +44,38 @@ public class JSONHelper {
 			for(Entry<String,Object> entry : ((HashMap<String,Object>)inp).entrySet())
 			{
 				jsonObject = new JSONObject();
-				jsonObject.put(entry.getKey(), build(entry.getValue()));
+				jsonObject.put(entry.getKey(), build(entry.getValue(), frameNo));
 				op.add(jsonObject);
 			}
 		}
 		return op;
+	}
+
+	public static JSONObject buildSensorJson(HashMap<String, BaseSensor> sensorMap, long frameNo)
+	{
+		try 
+		{
+			JSONObject  jsonObject = new JSONObject();
+			jsonObject.put("frameNo", frameNo);
+			for(Entry<String, BaseSensor> entry : sensorMap.entrySet())
+			{
+				try 
+				{
+					jsonObject.put(entry.getKey(), entry.getValue().getJsonResult());
+				} 
+				catch (JSONException e) 
+				{
+					Logger.e(LOGTAG,"Exception with Writing Sensor " + entry.getKey());
+				}
+			}
+			return jsonObject;
+		} 
+		catch (JSONException je) 
+		{
+			Logger.e(LOGTAG,"Exception with buildSensorJson");
+			return null;
+		}
+
 	}
 
 }

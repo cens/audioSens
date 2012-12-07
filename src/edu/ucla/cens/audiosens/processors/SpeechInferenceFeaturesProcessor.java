@@ -3,7 +3,7 @@ package edu.ucla.cens.audiosens.processors;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import edu.ucla.cens.audiosens.helper.Features;
+import edu.ucla.cens.audiosens.helper.FeaturesList;
 
 public class SpeechInferenceFeaturesProcessor extends BaseProcessor 
 {
@@ -27,11 +27,12 @@ public class SpeechInferenceFeaturesProcessor extends BaseProcessor
 	{
 		short[] data_short = (short[])data;
 		double[] tempResults = features(data_short);
-		addResult(Features.NUMCORPEAKS, tempResults[0]);
-		addResult(Features.MAXCORPEAK, tempResults[1]);
-		addResult(Features.MAXCORPEAKLAG, tempResults[2]);
-		addResult(Features.SPECTRALENTROPY, tempResults[3]);
-		addResult(Features.RELATIVESPECTRALENTROPY, tempResults[4]);
+		addResult(FeaturesList.NUMCORPEAKS, tempResults[0]);
+		addResult(FeaturesList.MAXCORPEAK, tempResults[1]);
+		addResult(FeaturesList.MAXCORPEAKLAG, tempResults[2]);
+		addResult(FeaturesList.SPECTRALENTROPY, tempResults[3]);
+		addResult(FeaturesList.RELATIVESPECTRALENTROPY, tempResults[4]);
+		addResult(FeaturesList.SPEECHINFERENCE, tempResults[8]);
 		
 		/*
 		double[] temp_arr;
@@ -47,11 +48,12 @@ public class SpeechInferenceFeaturesProcessor extends BaseProcessor
 	@Override
 	public void initializeResults()
 	{
-		results.put(Features.NUMCORPEAKS, new ArrayList<Double>());
-		results.put(Features.MAXCORPEAK, new ArrayList<Double>());
-		results.put(Features.MAXCORPEAKLAG, new ArrayList<Double>());
-		results.put(Features.SPECTRALENTROPY, new ArrayList<Double>());
-		results.put(Features.RELATIVESPECTRALENTROPY, new ArrayList<Double>());
+		results.put(FeaturesList.NUMCORPEAKS, new ArrayList<Double>());
+		results.put(FeaturesList.MAXCORPEAK, new ArrayList<Double>());
+		results.put(FeaturesList.MAXCORPEAKLAG, new ArrayList<Double>());
+		results.put(FeaturesList.SPECTRALENTROPY, new ArrayList<Double>());
+		results.put(FeaturesList.RELATIVESPECTRALENTROPY, new ArrayList<Double>());
+		results.put(FeaturesList.SPEECHINFERENCE, new ArrayList<Double>());
 		//results.put(Features.CORPEAKVALUES, new ArrayList<double[]>());
 		//results.put(Features.CORPEAKLAGVALUES, new ArrayList<double[]>());
 	}

@@ -75,62 +75,77 @@
                         android:textAppearance="?android:attr/textAppearanceSmall" />
                 </TableRow>
 
-                <TableRow
-                    android:id="@+id/period_tr"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:id="@+id/period_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Period (in seconds)"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <EditText
-                        android:id="@+id/period_et"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="Alarm Interval"
-                        android:inputType="number" >
-
-                        <requestFocus />
-                    </EditText>
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/duration_tr"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:id="@+id/duration_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Duration (in seconds)"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <EditText
-                        android:id="@+id/duration_et"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="Record Duration"
-                        android:inputType="number" />
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/autostart_tr"
-                    android:layout_width="wrap_content"
+                <TableLayout
+                    android:id="@+id/normalMode_tl"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone" >
+                    android:layout_margin="3dp"
+                    android:stretchColumns="*" >
 
-                    <CheckBox
-                        android:id="@+id/autostart_cb"
+                    <TableRow
+                        android:id="@+id/period_tr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/period_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Period (in seconds)"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <EditText
+                            android:id="@+id/period_et"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="Alarm Interval"
+                            android:inputType="number" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/duration_tr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/duration_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Duration (in seconds)"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <EditText
+                            android:id="@+id/duration_et"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="Record Duration"
+                            android:inputType="number" />
+                    </TableRow>
+                </TableLayout>
+
+                <TableLayout
+                    android:id="@+id/continuousMode_tl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:stretchColumns="*" >
+
+                    <TableRow
+                        android:id="@+id/continuous_tr"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Autostart"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-                </TableRow>
+                        android:visibility="visible" >
+
+                        <CheckBox
+                            android:id="@+id/continuousmode_cb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Continuous Mode"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                    </TableRow>
+
+                </TableLayout>
+
             </TableLayout>
 
             <TableLayout

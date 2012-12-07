@@ -1,6 +1,7 @@
 package edu.ucla.cens.audiosens.processing;
 
 import edu.ucla.cens.audiosens.helper.Logger;
+import edu.ucla.cens.audiosens.processing.AudioData.Flag;
 
 public class CircularQueue {
 	private int qMaxSize;// max queue size
@@ -23,7 +24,7 @@ public class CircularQueue {
 		q = new AudioData[qMaxSize];
 	}
 
-	public synchronized void insert(short[] data,long timestamp) 
+	public synchronized void insert(short[] data,long timestamp, Flag flag) 
 	{
 		synchronized(this)
 		{
@@ -33,12 +34,12 @@ public class CircularQueue {
 				rp = (rp + 1)%qMaxSize;
 				if(q[rp]==null)
 				{
-					q[rp]= new AudioData(data.clone(), timestamp);
+					q[rp]= new AudioData(data.clone(), timestamp, flag);
 					icount++;
 				}
 				else
 				{
-					q[rp].insert(data,timestamp);
+					q[rp].insert(data, timestamp, flag);
 				}
 				// start the delete thread and start copying because there is an element
 				notify(); 
@@ -69,7 +70,7 @@ public class CircularQueue {
 				if (!fullq()) {
 					qs++;
 					rp = (rp + 1)%qMaxSize;
-					q[rp] = new AudioData(data.clone(), timestamp);
+					q[rp] = new AudioData(data.clone(), timestamp, flag);
 					icount++;
 					notify(); 
 				}

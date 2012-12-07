@@ -7,8 +7,10 @@ import edu.ucla.cens.audiosens.classifier.ClassifierFactory;
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.PreferencesHelper;
+import edu.ucla.cens.audiosens.processing.AudioData.Flag;
 import edu.ucla.cens.audiosens.processors.BaseProcessor;
 import edu.ucla.cens.audiosens.processors.ProcessorFactory;
+import edu.ucla.cens.audiosens.sensors.BaseSensor;
 import edu.ucla.cens.audiosens.writers.BaseWriter;
 import edu.ucla.cens.audiosens.writers.WriterFactory;
 
@@ -26,26 +28,31 @@ public class ProcessingQueue extends Thread
 	HashMap<String,BaseProcessor> resultMap;
 	HashMap<String,BaseWriter> writerMap;
 	HashMap<String,BaseClassifier> classifierMap;
-	
+	RawAudioFileWriter rawAudioFileWriter;
+
 	private boolean startedRecording;
 	private boolean stoppedOnce;
+	private boolean continuousMode;
+	private boolean forceWrite;
 
 	//state variable
 	public boolean processComplete = false;
 
-	public ProcessingQueue(AudioSensRecorder obj, int frameSize, int frameStep)
+	public ProcessingQueue(AudioSensRecorder obj, int frameSize, int frameStep, boolean continuousMode)
 	{
 		Logger.d(LOGTAG,"Constructor");
-		
+
 		this.obj = obj;
 		this.frameSize = frameSize;
 		this.frameStep = frameStep;
+		this.continuousMode = continuousMode;
 		queue = new CircularQueue(AudioSensConfig.INITIALQUEUESIZE);
 		audioFrame = new short[frameSize];
 		resultMap = new HashMap<String,BaseProcessor>();
 		writerMap = new HashMap<String, BaseWriter>();
 		classifierMap = new HashMap<String, BaseClassifier>();
-		
+		forceWrite = false;
+
 		//initialize the first half with zeros
 		for(int i=0; i < frameSize; i++)
 			audioFrame[i] = 0;
@@ -55,7 +62,7 @@ public class ProcessingQueue extends Thread
 			if(!resultMap.containsKey(processorName))
 			{
 				BaseProcessor processor = ProcessorFactory.build(processorName);
-				
+
 				if(processor != null)
 				{
 					resultMap.put(processorName, processor);
@@ -86,7 +93,7 @@ public class ProcessingQueue extends Thread
 			}
 		}
 		Logger.d(LOGTAG,"Initialized Writers");
-		
+
 		for(String classifierName : AudioSensConfig.CLASSIFIERS)
 		{
 			if(!classifierMap.containsKey(classifierName))
@@ -141,32 +148,40 @@ public class ProcessingQueue extends Thread
 			audioFromQueueData = (AudioData)(queue.deleteAndHandleData());
 			if(audioFromQueueData == null)
 				continue;
-			
+
 			System.arraycopy(audioFromQueueData.data, 0, audioFrame, frameStep, frameStep);
-			
+
 			for(BaseProcessor processor : resultMap.values())
 			{
 				processor.process(audioFrame);
-				
-				Logger.d(LOGTAG, "Processing frame : "+processor.framesPending+"/"+queue.getQSize());
-				if(AudioSensConfig.DATAFRAMELIMITON )
-				{
-					if(processor.framesPending > AudioSensConfig.DATAFRAMELIMIT)
-					{
-						writeData();
-					}
-				}
+
+				Logger.d(LOGTAG, "Processing frame : "+processor.framesPending+"/"+queue.getQSize() + "for processor: " + processor.getName());
 			}
+
+			if(AudioSensConfig.RAWAUDIO)
+			{
+				processRawAudio(audioFrame);
+			}
+
 			Logger.d(LOGTAG, "End of Processing Loop");
-			
+
 			for(BaseClassifier classifier : classifierMap.values())
 			{
 				//processor.process(audioFrame);
 				classifier.classify(resultMap);
 			}
 
+			if(continuousMode)
+			{
+				if(forceWrite)
+				{
+					writeData();
+					forceWrite = false;
+				}
+			}
+
 		}
-		
+
 		Logger.d(LOGTAG,"FinishedProcessingQueue");
 		Logger.d(LOGTAG,"FinishedProcessingQueue2");
 
@@ -177,10 +192,30 @@ public class ProcessingQueue extends Thread
 		Logger.d(LOGTAG,"In writeData");
 		for(BaseWriter writer : writerMap.values())
 		{
+			writer.writeSensors(obj.getSensorMap(), obj.getFrameNo());
 			for(BaseProcessor processor : resultMap.values())
 			{
-				writer.write(processor);
+				writer.write(processor, obj.getFrameNo());
 			}
+		}
+
+		if(AudioSensConfig.RAWAUDIO)
+			rawAudioFileWriter.write();
+
+		obj.setFrameNo();
+		cleanUpProcessors();
+	}
+
+	public void forceWrite()
+	{
+		forceWrite = true;
+	}
+
+	public void cleanUpProcessors()
+	{
+		for(BaseProcessor processor : resultMap.values())
+		{
+			processor.clearResults();
 		}
 	}
 
@@ -191,16 +226,27 @@ public class ProcessingQueue extends Thread
 			writer.destroy();
 		}
 	}
-	
-	
+
+	private void processRawAudio(short[] data)
+	{
+		if(rawAudioFileWriter == null)
+			rawAudioFileWriter = new RawAudioFileWriter();
+		if(!rawAudioFileWriter.hasPermanentlyFailed())
+		{
+			if(!rawAudioFileWriter.isInitialized())
+				rawAudioFileWriter.init(obj.getFrameNo());
+			rawAudioFileWriter.process(data);
+		}
+	}
+
 	/**
 	 * Insert Data Frames into the circular queue
 	 * @param data
 	 * @param timestamp
 	 */
-	public synchronized void insertData(short[] data,long timestamp)
+	public synchronized void insertData(short[] data,long timestamp,Flag flag)
 	{
-		queue.insert(data, timestamp);
+		queue.insert(data, timestamp, flag);
 	}
 
 

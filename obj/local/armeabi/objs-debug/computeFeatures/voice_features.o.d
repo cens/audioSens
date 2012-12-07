@@ -1,5 +1,5 @@
-obj/local/armeabi/objs-debug/computeFeatures/kiss_fftr.o: jni/kiss_fftr.c \
- jni/kiss_fftr.h jni/kiss_fft.h \
+obj/local/armeabi/objs-debug/computeFeatures/voice_features.o: \
+ jni/voice_features.c \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdlib.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/cdefs.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/cdefs_elf.h \
@@ -20,7 +20,6 @@ obj/local/armeabi/objs-debug/computeFeatures/kiss_fftr.o: jni/kiss_fftr.c \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/kernel.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/memory.h \
- /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdio.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/math.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/limits.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/limits.h \
@@ -28,11 +27,10 @@ obj/local/armeabi/objs-debug/computeFeatures/kiss_fftr.o: jni/kiss_fftr.c \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/internal_types.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/machine/limits.h \
  /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/syslimits.h \
- jni/_kiss_fft_guts.h
-
-jni/kiss_fftr.h:
-
-jni/kiss_fft.h:
+ jni/voice_features.h jni/kiss_fftr.h jni/kiss_fft.h \
+ /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdio.h \
+ /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/jni.h \
+ /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/android/log.h
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdlib.h:
 
@@ -74,8 +72,6 @@ jni/kiss_fft.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/memory.h:
 
-/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdio.h:
-
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/math.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/limits.h:
@@ -90,4 +86,14 @@ jni/kiss_fft.h:
 
 /Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/sys/syslimits.h:
 
-jni/_kiss_fft_guts.h:
+jni/voice_features.h:
+
+jni/kiss_fftr.h:
+
+jni/kiss_fft.h:
+
+/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/stdio.h:
+
+/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/jni.h:
+
+/Users/donygeorge/android/ndk/platforms/android-14/arch-arm/usr/include/android/log.h:

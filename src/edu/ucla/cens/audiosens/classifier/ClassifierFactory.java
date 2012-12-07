@@ -10,7 +10,7 @@ public class ClassifierFactory
 	{
 		try 
 		{
-			return (BaseClassifier) Class.forName("edu.ucla.cens.audiosens.classifierss."+classifierName+"Writer").newInstance();
+			return (BaseClassifier) Class.forName("edu.ucla.cens.audiosens.classifier."+classifierName+"Classifier").newInstance();
 		} 
 		catch (InstantiationException e) 
 		{
