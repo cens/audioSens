@@ -38,6 +38,7 @@ public class AudioSensRecorder implements Runnable
 	short[] tempBuffer;
 	
 	long startTime;
+	long actualStartTime;
 	long prevWriteTime;
 	long frameNumber;
 	
@@ -50,10 +51,11 @@ public class AudioSensRecorder implements Runnable
 	/*
 	 * Constructor for normal mode
 	 */
-	public AudioSensRecorder(AudioSensService obj, int duration, boolean continuousMode)
+	public AudioSensRecorder(AudioSensService obj, int duration, boolean continuousMode, long startTime)
 	{
 		this.obj = obj;
 		sensorMap = obj.sensorMap;
+		this.startTime = startTime;
 		
 		//Preferences
 		mSettings = PreferenceManager.getDefaultSharedPreferences(obj);
@@ -95,9 +97,9 @@ public class AudioSensRecorder implements Runnable
 		
 		// Allocate Recorder and Start Recording…
 		bufferRead = 0;
-		startTime = System.currentTimeMillis();
-		prevWriteTime = startTime;
-		frameNumber = startTime;
+		actualStartTime = System.currentTimeMillis();
+		prevWriteTime = actualStartTime;
+		frameNumber = actualStartTime;
 
 		recordInstance = new AudioRecord(
 				MediaRecorder.AudioSource.MIC,
@@ -226,6 +228,11 @@ public class AudioSensRecorder implements Runnable
 	public long getFrameNo()
 	{
 		return frameNumber;
+	}
+	
+	public AudioSensService getService()
+	{
+		return obj;
 	}
 	
 	public void setFrameNo()

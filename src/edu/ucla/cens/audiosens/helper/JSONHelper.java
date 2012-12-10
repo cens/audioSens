@@ -15,20 +15,19 @@ public class JSONHelper {
 	public static final String LOGTAG = "JSONHelper";
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static JSONObject build(Object inp, long frameNo) throws JSONException
+	public static JSONObject build(Object inp) throws JSONException
 	{
 		JSONObject jsonObject = new JSONObject();
 		if(inp instanceof ArrayList)
 		{
 			JSONArray jsonArray = new JSONArray((ArrayList)inp);
 			jsonObject.put("data", jsonArray);
-			jsonObject.put("frameNo", frameNo);
 		}
 		else if(inp instanceof HashMap)
 		{
 			for(Entry<String,Object> entry : ((HashMap<String,Object>)inp).entrySet())
 			{
-				jsonObject.put(entry.getKey(), build(entry.getValue(), frameNo));
+				jsonObject.put(entry.getKey(), build(entry.getValue()));
 			}
 		}
 		return jsonObject;
@@ -43,8 +42,9 @@ public class JSONHelper {
 		{
 			for(Entry<String,Object> entry : ((HashMap<String,Object>)inp).entrySet())
 			{
-				jsonObject = new JSONObject();
-				jsonObject.put(entry.getKey(), build(entry.getValue(), frameNo));
+				jsonObject = build(entry.getValue());
+				jsonObject.put("feature", entry.getKey());
+				jsonObject.put("frameNo", frameNo);
 				op.add(jsonObject);
 			}
 		}

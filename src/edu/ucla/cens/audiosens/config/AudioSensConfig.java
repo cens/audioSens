@@ -31,7 +31,7 @@ public final class AudioSensConfig
 											FeaturesList.SPEECHINFERENCEFEATURES};
 	
 	//Writers
-	public final static String[] DATAWRITERS = {"AndroidLog"};
+	public final static String[] DATAWRITERS = {"AndroidLog","Ohmage"};
 	
 	//Classifiers
 	public final static String[] CLASSIFIERS = {"VoiceActivityDetection"};
@@ -46,8 +46,11 @@ public final class AudioSensConfig
 	public final static String STATUSRECEIVERTAG = "statusReceiverIntent";
 	public final static String STATUSRECEIVER_RECORD = "recordStatus";
 	public final static String STATUSRECEIVER_MSG = "messageStatus";
+	public final static String INFERENCERECEIVERTAG = "speechInferenceReceiverIntent";
+	public final static String INFERENCERECEIVER_PERCENT = "speechInferencePercent";
 	
 	//Location
 	public final static int LOCATION_MINDISTANCE = 20;	//Minimum Distance between Location Updates (in meters)
 	public final static int LOCATION_MINTIME = 60 * 1000;	//Minimum Time between Location Updates (in ms)
+
 }

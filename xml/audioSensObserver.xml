@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<observer>
+    <id>org.ohmage.probes.audioSensProbe</id>
+    <version>4</version>
+    
+    <name>AudioSensProbe</name>
+    <description>A probe to upload acoustic features and speech/non-speech inference</description>
+    <versionString>4.0</versionString>
+    
+    <stream>
+        <id>features</id>
+        <version>4</version>
+        
+        <name>Audio Features</name>
+        <description>This records the VersionNumber, Frame Number, Feature Name and an array of Data Points</description>
+		
+        <schema>
+            {
+                "type":"object",
+                "doc":"Audio Features",
+                "schema":[
+					{
+                        "name":"version",
+                        "doc":"Version Number",
+                        "type":"string"
+                    },
+					{
+                        "name":"frameNo",
+                        "doc":"Frame Number , starting timestamp",
+                        "type":"number"
+                    },
+					{
+                        "name":"feature",
+                        "doc":"Name of the Acoustic Feature",
+                        "type":"string"
+                    },
+					{
+                        "name":"data",
+                        "doc":"Array of data Points",
+                        "type":"array",
+						"schema":{
+                            "type":"number"
+                        }
+                    }
+                ]
+            }
+        </schema>
+    </stream>
+    
+    <stream>
+        <id>sensors</id>
+        <version>4</version>
+        
+        <name>Phone Sensors</name>
+        <description>Data from sensors such as Location, Battery</description>
+		
+        <schema>
+            {
+                "type":"object",
+                "doc":"Audio Features",
+                "schema":[
+					{
+                        "name":"version",
+                        "doc":"Version Number",
+                        "type":"string"
+                    },
+					{
+                        "name":"frameNo",
+                        "doc":"Frame Number , starting timestamp",
+                        "type":"number"
+                    },
+					{
+                        "name":"Location",
+                        "doc":"location",
+                        "type":"object",
+                        "schema":[
+	                       	{
+		                        "name":"lattitude",
+		                        "doc":"Lattitude",
+		                        "type":"number"
+	                    	},
+	                    	{
+		                        "name":"longitude",
+		                        "doc":"Longitude",
+		                        "type":"number"
+	                    	},
+	                    	{
+		                        "name":"accuracy",
+		                        "doc":"Accuracy",
+		                        "type":"number"
+	                    	},
+	                    	{
+		                        "name":"provider",
+		                        "doc":"Provider",
+		                        "type":"string"
+	                    	}
+	                    ]
+	                },
+	                {
+                        "name":"Battery",
+                        "doc":"Batery Sensor",
+                        "type":"object",
+                        "schema":[
+	                       	{
+		                        "name":"percent",
+		                        "doc":"Battery Percent",
+		                        "type":"number"
+	                    	},
+	                    	{
+		                        "name":"Charging",
+		                        "doc":"Battery charging",
+		                        "type":"boolean"
+	                    	},
+	                    	{
+		                        "name":"USBCharging",
+		                        "doc":"USB Charging",
+		                        "type":"boolean"
+	                    	},
+	                    	{
+		                        "name":"ACCharging",
+		                        "doc":"AC Charging",
+		                        "type":"boolean"
+	                    	}
+	                    ]
+	                }
+                ]
+            }
+        </schema>
+    </stream>
+</observer>

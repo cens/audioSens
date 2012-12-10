@@ -57,8 +57,8 @@ public class BatterySensor extends BaseSensor {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("percent", batteryPercent);
 		jsonObject.put("Charging", isCharging);
-		jsonObject.put("USB Charging", usbCharge);
-		jsonObject.put("AC Charging", acCharge);
+		jsonObject.put("USBCharging", usbCharge);
+		jsonObject.put("ACCharging", acCharge);
 		return jsonObject;
 	}
 

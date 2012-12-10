@@ -51,6 +51,7 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 				currentSpeech = 0;
 				prevSecond = totalTime/1000;
 				Logger.w(LOGTAG, "Inference : "+secondInference);
+				notifyUI(secondInference);
 			}
 			
 			
@@ -61,6 +62,11 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 			return;
 		}
 		
+	}
+	
+	private void notifyUI(double percent)
+	{
+		obj.getService().sendSpeechInferenceBroadcast(percent);
 	}
 
 	

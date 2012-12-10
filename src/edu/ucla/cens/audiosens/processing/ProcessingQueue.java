@@ -83,7 +83,7 @@ public class ProcessingQueue extends Thread
 				BaseWriter writer = WriterFactory.build(writerName);
 				if(writer != null)
 				{
-					writer.initialize();
+					writer.initialize(obj.getService());
 					writerMap.put(writerName, writer);
 				}
 				else
@@ -101,7 +101,7 @@ public class ProcessingQueue extends Thread
 				BaseClassifier classifier = ClassifierFactory.build(classifierName);
 				if(classifier != null)
 				{
-					classifier.initialize();
+					classifier.initialize(obj);
 					classifierMap.put(classifierName, classifier);
 				}
 				else
@@ -192,15 +192,28 @@ public class ProcessingQueue extends Thread
 		Logger.d(LOGTAG,"In writeData");
 		for(BaseWriter writer : writerMap.values())
 		{
-			writer.writeSensors(obj.getSensorMap(), obj.getFrameNo());
-			for(BaseProcessor processor : resultMap.values())
+			if(writer.isConnected())
 			{
-				writer.write(processor, obj.getFrameNo());
+				if(writer.writesSensors())
+				{
+					writer.writeSensors(obj.getSensorMap(), obj.getFrameNo());
+				}
+
+				if(writer.writesFeatures())
+				{
+					for(BaseProcessor processor : resultMap.values())
+					{
+						writer.write(processor, obj.getFrameNo());
+					}
+				}
 			}
 		}
 
 		if(AudioSensConfig.RAWAUDIO)
-			rawAudioFileWriter.write();
+		{
+			if(rawAudioFileWriter != null && !rawAudioFileWriter.hasPermanentlyFailed())
+				rawAudioFileWriter.write();
+		}
 
 		obj.setFrameNo();
 		cleanUpProcessors();

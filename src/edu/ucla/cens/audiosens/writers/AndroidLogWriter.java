@@ -2,11 +2,10 @@ package edu.ucla.cens.audiosens.writers;
 
 
 import java.util.HashMap;
-import java.util.Map.Entry;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.ucla.cens.audiosens.AudioSensService;
+import edu.ucla.cens.audiosens.config.AndroidLogWriterConfig;
 import edu.ucla.cens.audiosens.helper.JSONHelper;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.processors.BaseProcessor;
@@ -17,8 +16,17 @@ public class AndroidLogWriter extends BaseWriter {
 	private static final String LOGTAG = "AndroidLogWriter";
 	private static final String DATATAG = "AudioSensData";
 	
+	public AndroidLogWriter()
+	{
+		super();
+		isConnected = true;
+		writesFeatures = AndroidLogWriterConfig.WRITESFEATURES;
+		writesInference = AndroidLogWriterConfig.WRITESINFERENCE;
+		writesSensors = AndroidLogWriterConfig.WRITESSENSORS;
+	}
+	
 	@Override
-	public void initialize() {
+	public void initialize(AudioSensService service) {
 		// TODO Auto-generated method stub
 
 	}

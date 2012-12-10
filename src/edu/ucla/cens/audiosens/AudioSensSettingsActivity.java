@@ -3,6 +3,7 @@ package edu.ucla.cens.audiosens;
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.PreferencesHelper;
+import edu.ucla.cens.audiosens.helper.UIHelper;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Activity;
@@ -181,36 +182,21 @@ public class AudioSensSettingsActivity extends Activity {
 	{
 		if(enabled)
 		{
-			enableDisableView((View)findViewById(R.id.scrollView1),true);
+			UIHelper.enableDisableView((View)findViewById(R.id.scrollView1),true);
 			if(continuousMode_cb.isChecked())
 			{
 				enableDisableNormalSettings(false);
 			}
 		}
 		else
-			enableDisableView((View)findViewById(R.id.scrollView1),false);
+			UIHelper.enableDisableView((View)findViewById(R.id.scrollView1),false);
 	}
 	
 	private void enableDisableNormalSettings(boolean enabled)
 	{
-		enableDisableView((View)findViewById(R.id.normalMode_tl),enabled);
+		UIHelper.enableDisableView((View)findViewById(R.id.normalMode_tl),enabled);
 	}
 	
-	/*
-	 * Disables all elements in the viewGroup
-	 */
-	private void enableDisableView(View view, boolean enabled) 
-	{
-	    view.setEnabled(enabled);
-	    if ( view instanceof ViewGroup ) 
-	    {
-	        ViewGroup group = (ViewGroup)view;
-	        for ( int idx = 0 ; idx < group.getChildCount() ; idx++ ) 
-	        {
-	            enableDisableView(group.getChildAt(idx), enabled);
-	        }
-	    }
-	}
 	
 	/*
 	 * Pops up a message Box

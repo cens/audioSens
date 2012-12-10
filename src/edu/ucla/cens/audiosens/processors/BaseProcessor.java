@@ -67,7 +67,7 @@ public abstract class BaseProcessor
 	{
 		try 
 		{
-			return JSONHelper.build(results, frameNo);
+			return JSONHelper.build(results);
 		} 
 		catch (JSONException je) 
 		{

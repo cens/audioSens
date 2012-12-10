@@ -35,7 +35,7 @@
                         android:text="Status"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </TableRow>
-                
+
                 <TableRow
                     android:id="@+id/appStatus_tr"
                     android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
                         android:text="Disabled"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-				</TableRow>
+                </TableRow>
 
                 <TableRow
                     android:id="@+id/recordingStatus_tr"
@@ -84,7 +84,48 @@
                         android:padding="5dp"
                         android:text="Off"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
 
+                <TableRow
+                    android:id="@+id/results_heading_tr"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="#c2c2c2"
+                    android:padding="3dp" >
+
+                    <TextView
+                        android:id="@+id/results_heading_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Results"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/speechPercent_tr"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/speechPercent_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Speech Percent"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/speechPercent_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:padding="5dp"
+                        android:text="-1"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
 
             </TableLayout>

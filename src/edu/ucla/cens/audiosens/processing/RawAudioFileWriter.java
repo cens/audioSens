@@ -28,6 +28,8 @@ public class RawAudioFileWriter
 	private int bSamples;
 	private int noChannels;
 
+	private byte[] data_byte;
+
 	public RawAudioFileWriter()
 	{
 		initialized = false;
@@ -59,7 +61,7 @@ public class RawAudioFileWriter
 			fWriter.writeInt(Integer.reverseBytes(16)); // Sub-chunk size, 16 for PCM
 			fWriter.writeShort(Short.reverseBytes((short) 1)); // AudioFormat, 1 for PCM
 			fWriter.writeShort(Short.reverseBytes((short)noChannels));// Number of channels, 1 for mono, 2 for stereo
-			fWriter.writeInt(Integer.reverseBytes((short)AudioSensConfig.FREQUENCY)); // Sample rate
+			fWriter.writeInt(Integer.reverseBytes(AudioSensConfig.FREQUENCY)); // Sample rate
 			fWriter.writeInt(Integer.reverseBytes(AudioSensConfig.FREQUENCY*bSamples*noChannels/8)); // Byte rate, SampleRate*NumberOfChannels*BitsPerSample/8
 			fWriter.writeShort(Short.reverseBytes((short)(noChannels*bSamples/8))); // Block align, NumberOfChannels*BitsPerSample/8
 			fWriter.writeShort(Short.reverseBytes((short)bSamples)); // Bits per sample
@@ -89,28 +91,40 @@ public class RawAudioFileWriter
 		if(!initialized || permanentFailure)
 			return;
 		
-		for(int i=0;i<data.length;i++)
+		try 
 		{
-			try 
-			{
-				fWriter.writeShort(Short.reverseBytes(data[i]));
-			} 
-			catch (IOException ioe) 
-			{
-				permanentFailure = true;
-				Logger.e(LOGTAG,"Exception:" + ioe);
-				cleanFile();
-				return;			
-			}
+			convertToByteArray(data);
+			fWriter.write(data_byte);
+		} 
+		catch (IOException ioe) 
+		{
+			permanentFailure = true;
+			Logger.e(LOGTAG,"Exception:" + ioe);
+			cleanFile();
 		}
-		payloadSize += data.length*2;
+
+		payloadSize += data.length;
+	}
+
+	private void convertToByteArray(short[] data)
+	{
+		if(data_byte == null || (data.length) != data_byte.length )
+			data_byte = new byte[data.length];
+
+		int halfBufferLength = data.length/2;
+		
+		for(int i=0;i<halfBufferLength;i++)
+		{
+			data_byte[i*2] = (byte)(data[halfBufferLength + i] & 0xff);
+			data_byte[i*2+1] = (byte)((data[halfBufferLength + i] >> 8) & 0xff);
+		}
 	}
 
 	public void write()
 	{
 		if(!initialized || permanentFailure)
 			return;
-		
+
 		try
 		{
 			if(fWriter!=null)
@@ -134,7 +148,7 @@ public class RawAudioFileWriter
 		}
 		initialized = false;
 	}
-	
+
 	void cleanFile()
 	{
 		if(fWriter!=null)
@@ -156,7 +170,7 @@ public class RawAudioFileWriter
 	{
 		if(isSDCardPresent())
 		{
-			fDirPath=Environment.getExternalStorageDirectory().getAbsolutePath() +"/AcousticAppData";
+			fDirPath=Environment.getExternalStorageDirectory().getAbsolutePath() +"/AudioSensData";
 			File folder = new File(fDirPath);
 			if (!folder.exists()) 
 			{

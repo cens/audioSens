@@ -111,7 +111,9 @@ public class AudioSensService extends Service {
 						{
 							public void run()
 							{
-								startRecording();
+								long startTime = System.currentTimeMillis();
+								Logger.w(LOGTAG,"Calling startRecording");
+								startRecording(startTime);
 							}
 						};
 						t.start();
@@ -181,10 +183,9 @@ public class AudioSensService extends Service {
 	/**
 	 * Starts the actual recording
 	 */
-	private void startRecording()
+	private synchronized void startRecording(long startTime)
 	{
-		Logger.d(LOGTAG,"StartRecording");
-		Logger.d(LOGTAG,"StartRecording:"+continuousMode);
+		Logger.w(LOGTAG,"StartRecording");
 
 		if(continuousMode)
 			setNotification(NotificationLevel.GREEN, "AudioSens Running", "Capturing audio continuously");
@@ -196,7 +197,7 @@ public class AudioSensService extends Service {
 
 		sendStatusBroadcast(true, null);
 
-		recorderInstance = new AudioSensRecorder(this, duration, continuousMode); 
+		recorderInstance = new AudioSensRecorder(this, duration, continuousMode, startTime); 
 		recordThread =new Thread(recorderInstance); 
 		recordThread.start();
 		recorderInstance.setRecording(true);
@@ -345,6 +346,13 @@ public class AudioSensService extends Service {
 		intent.putExtra(AudioSensConfig.STATUSRECEIVER_MSG, message);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
+	
+	public void sendSpeechInferenceBroadcast(double percent)
+	{
+		Intent intent = new Intent(AudioSensConfig.INFERENCERECEIVERTAG);
+		intent.putExtra(AudioSensConfig.INFERENCERECEIVER_PERCENT, percent);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+	}
 
 
 	//load local variables from SharedPreferences
@@ -353,6 +361,11 @@ public class AudioSensService extends Service {
 		period = mSettings.getInt(PreferencesHelper.PERIOD, AudioSensConfig.PERIOD);
 		duration = mSettings.getInt(PreferencesHelper.DURATION, AudioSensConfig.DURATION);
 		continuousMode = mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, false);
+	}
+
+	public String getVersionNo() 
+	{
+		return mSettings.getString(PreferencesHelper.VERSION, "0.0");
 	}
 
 }
