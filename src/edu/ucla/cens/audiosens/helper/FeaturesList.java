@@ -15,4 +15,6 @@ public class FeaturesList
 	public static final String CORPEAKVALUES = "CorrelationPeakValues";
 	public static final String CORPEAKLAGVALUES = "CorrelationPeakLagValues";
 
+	public static final String MFCC = "MFCC";
+
 }

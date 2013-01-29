@@ -5,8 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import edu.ucla.cens.audiosens.AudioSensRecorder;
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
 import edu.ucla.cens.audiosens.helper.Logger;
+import edu.ucla.cens.audiosens.helper.PreferencesHelper;
 
 import android.media.AudioFormat;
 import android.os.Environment;
@@ -16,6 +18,7 @@ public class RawAudioFileWriter
 	private final String LOGTAG = "RawAudioFileWriter";
 	private boolean initialized;
 	private boolean permanentFailure;
+	private AudioSensRecorder obj;
 
 	//To create Raw Audio Files
 	private int payloadSize=0;
@@ -30,10 +33,11 @@ public class RawAudioFileWriter
 
 	private byte[] data_byte;
 
-	public RawAudioFileWriter()
+	public RawAudioFileWriter(AudioSensRecorder obj)
 	{
 		initialized = false;
 		permanentFailure = false;
+		this.obj = obj;
 	}
 
 	public void init(long frameNo)
@@ -43,7 +47,7 @@ public class RawAudioFileWriter
 			permanentFailure = true;
 			return;
 		}
-
+		
 		fPath_temp=fDirPath+"/p"+frameNo+".wav";
 		fPath=fDirPath+"/"+frameNo+".wav";
 		payloadSize = 0;
@@ -137,7 +141,16 @@ public class RawAudioFileWriter
 
 				fWriter.close(); // Remove prepared file
 				fWriter= null;
-				file.renameTo(new File(fPath));
+				
+				if(AudioSensConfig.RAWAUDIO_WRITEONLYSPEECH && !obj.mSettings.getBoolean(PreferencesHelper.SPEECHMODE, false))
+				{
+					Logger.i("Deleting File");
+					file.delete();
+				}
+				else
+				{
+					file.renameTo(new File(fPath));
+				}
 			}
 		}
 		catch(IOException ioe)

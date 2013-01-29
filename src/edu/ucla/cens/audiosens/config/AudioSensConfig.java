@@ -28,7 +28,8 @@ public final class AudioSensConfig
 	
 	//Features
 	public final static String[] FEATURES = {FeaturesList.ENERGY,
-											FeaturesList.SPEECHINFERENCEFEATURES};
+											FeaturesList.SPEECHINFERENCEFEATURES,
+											FeaturesList.MFCC};
 	
 	//Writers
 	public final static String[] DATAWRITERS = {"AndroidLog","Ohmage"};
@@ -40,7 +41,8 @@ public final class AudioSensConfig
 	public final static String[] SENSORS = {"Location", "Battery"};
 	
 	//Raw Audio
-	public final static boolean RAWAUDIO = false;
+	public final static boolean RAWAUDIO = true;
+	public final static boolean RAWAUDIO_WRITEONLYSPEECH = true;
 	
 	//Intents
 	public final static String STATUSRECEIVERTAG = "statusReceiverIntent";

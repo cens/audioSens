@@ -57,6 +57,7 @@ public class SpeechInferenceFeaturesProcessor extends BaseProcessor
 		//results.put(Features.CORPEAKVALUES, new ArrayList<double[]>());
 		//results.put(Features.CORPEAKLAGVALUES, new ArrayList<double[]>());
 	}
+	
 	@Override
 	public void setName() {
 		setName("SpeechInferenceFeatures");

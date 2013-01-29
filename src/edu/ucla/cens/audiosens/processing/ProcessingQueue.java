@@ -206,6 +206,15 @@ public class ProcessingQueue extends Thread
 						writer.write(processor, obj.getFrameNo());
 					}
 				}
+				
+				if(writer.writesClassifier())
+				{
+					for(BaseClassifier classifier : classifierMap.values())
+					{
+						classifier.complete();
+						writer.writeClassifier(classifier, obj.getFrameNo());
+					}
+				}
 			}
 		}
 
@@ -231,6 +240,14 @@ public class ProcessingQueue extends Thread
 			processor.clearResults();
 		}
 	}
+	
+	public void cleanUpClassifiers()
+	{
+		for(BaseClassifier classifier : classifierMap.values())
+		{
+			classifier.clearResults();
+		}
+	}
 
 	public void closeConnections()
 	{
@@ -243,7 +260,7 @@ public class ProcessingQueue extends Thread
 	private void processRawAudio(short[] data)
 	{
 		if(rawAudioFileWriter == null)
-			rawAudioFileWriter = new RawAudioFileWriter();
+			rawAudioFileWriter = new RawAudioFileWriter(obj);
 		if(!rawAudioFileWriter.hasPermanentlyFailed())
 		{
 			if(!rawAudioFileWriter.isInitialized())

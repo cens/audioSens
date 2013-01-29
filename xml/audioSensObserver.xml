@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <observer>
     <id>org.ohmage.probes.audioSensProbe</id>
-    <version>4</version>
+    <version>6</version>
     
     <name>AudioSensProbe</name>
     <description>A probe to upload acoustic features and speech/non-speech inference</description>
-    <versionString>4.0</versionString>
+    <versionString>6.0</versionString>
     
     <stream>
         <id>features</id>
-        <version>4</version>
+        <version>6</version>
         
         <name>Audio Features</name>
         <description>This records the VersionNumber, Frame Number, Feature Name and an array of Data Points</description>
@@ -47,9 +47,51 @@
         </schema>
     </stream>
     
+    
+    <stream>
+        <id>classifiers</id>
+        <version>6</version>
+        
+        <name>Classifiers</name>
+        <description>This records the VersionNumber, Frame Number, Classifer Name and an array of Data Points</description>
+		
+        <schema>
+            {
+                "type":"object",
+                "doc":"Classifers",
+                "schema":[
+					{
+                        "name":"version",
+                        "doc":"Version Number",
+                        "type":"string"
+                    },
+					{
+                        "name":"frameNo",
+                        "doc":"Frame Number , starting timestamp",
+                        "type":"number"
+                    },
+					{
+                        "name":"classifier",
+                        "doc":"Name of the Classifier",
+                        "type":"string"
+                    },
+					{
+                        "name":"data",
+                        "doc":"Array of data Points",
+                        "type":"array",
+						"schema":{
+                            "type":"number"
+                        }
+                    }
+                ]
+            }
+        </schema>
+    </stream>
+    
+    
     <stream>
         <id>sensors</id>
-        <version>4</version>
+        <version>6</version>
         
         <name>Phone Sensors</name>
         <description>Data from sensors such as Location, Battery</description>
@@ -75,8 +117,8 @@
                         "type":"object",
                         "schema":[
 	                       	{
-		                        "name":"lattitude",
-		                        "doc":"Lattitude",
+		                        "name":"latitude",
+		                        "doc":"Latitude",
 		                        "type":"number"
 	                    	},
 	                    	{

@@ -1,6 +1,8 @@
 
 package edu.ucla.cens.audiosens.helper;
 
+import java.util.TimeZone;
+
 import android.content.Context;
 import android.os.RemoteException;
 import org.json.JSONObject;
@@ -18,7 +20,7 @@ public class OhmageProbeWriter extends ProbeWriter
         super(context);
     }
 
-    public void writeFeatures(JSONObject data) 
+    public void writeFeatures(JSONObject data, long timestamp) 
     {
         try 
         {
@@ -28,6 +30,8 @@ public class OhmageProbeWriter extends ProbeWriter
             				OhmageWriterConfig.STREAM_FEATURES_VERSION);
 
             probe.setData(data.toString());
+            probe.withTime(timestamp, TimeZone.getDefault().getID());
+            probe.withId();
             probe.write(this);
         } 
         catch (RemoteException re) 
@@ -36,7 +40,7 @@ public class OhmageProbeWriter extends ProbeWriter
         }
     }
     
-    public void writeSensors(JSONObject data) 
+    public void writeSensors(JSONObject data, long timestamp) 
     {
         try 
         {
@@ -46,6 +50,28 @@ public class OhmageProbeWriter extends ProbeWriter
             				OhmageWriterConfig.STREAM_SENSORS_VERSION);
 
             probe.setData(data.toString());
+            probe.withTime(timestamp, TimeZone.getDefault().getID());
+            probe.withId();
+            probe.write(this);
+        } 
+        catch (RemoteException re) 
+        {
+        	Logger.e(LOGTAG,"Exception: " + re);
+        }
+    }
+    
+    public void writeClassifiers(JSONObject data, long timestamp) 
+    {
+        try 
+        {
+            ProbeBuilder probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
+            										OhmageWriterConfig.OBSERVER_VERSION);
+            probe.setStream(OhmageWriterConfig.STREAM_CLASSIFIERS, 
+            				OhmageWriterConfig.STREAM_CLASSIFIERS_VERSION);
+
+            probe.setData(data.toString());
+            probe.withTime(timestamp, TimeZone.getDefault().getID());
+            probe.withId();
             probe.write(this);
         } 
         catch (RemoteException re) 

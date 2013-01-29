@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.ucla.cens.audiosens.classifier.BaseClassifier;
 import edu.ucla.cens.audiosens.sensors.BaseSensor;
 
 public class JSONHelper {
@@ -50,7 +51,15 @@ public class JSONHelper {
 		}
 		return op;
 	}
-
+	
+	public static JSONObject buildClassifierJson(BaseClassifier classifier, long frameNo) throws JSONException
+	{
+		JSONObject jsonObject = build(classifier.getResults());
+		jsonObject.put("classifier", classifier.getName());
+		jsonObject.put("frameNo", frameNo);
+		return jsonObject;
+	}
+	
 	public static JSONObject buildSensorJson(HashMap<String, BaseSensor> sensorMap, long frameNo)
 	{
 		try 
