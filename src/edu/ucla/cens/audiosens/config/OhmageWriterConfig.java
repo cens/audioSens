@@ -14,7 +14,7 @@ public class OhmageWriterConfig
     public static final String STREAM_CLASSIFIERS = "classifiers";
     public static final int STREAM_CLASSIFIERS_VERSION = 6	;
 
-    public static final boolean WRITESFEATURES = false;
+    public static final boolean WRITESFEATURES = true;
     public static final boolean WRITESSENSORS = true;
     public static final boolean WRITESCLASSIFIERS = true;
 }

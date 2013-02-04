@@ -41,7 +41,7 @@ public final class AudioSensConfig
 	public final static String[] SENSORS = {"Location", "Battery"};
 	
 	//Raw Audio
-	public final static boolean RAWAUDIO = true;
+	public final static boolean RAWAUDIO = false;
 	public final static boolean RAWAUDIO_WRITEONLYSPEECH = true;
 	
 	//Intents
