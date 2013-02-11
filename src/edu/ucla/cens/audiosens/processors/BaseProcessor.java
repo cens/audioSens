@@ -17,6 +17,9 @@ public abstract class BaseProcessor
 	
 	@SuppressWarnings("rawtypes")
 	protected HashMap<String,ArrayList> results;
+	@SuppressWarnings("rawtypes")
+	protected HashMap<String,HashMap> summaries;
+
 	private String[] dependencies;
 	public int framesPending;
 	public HashMap<String,Integer> framesPendingMap;
@@ -27,10 +30,13 @@ public abstract class BaseProcessor
 	{
 		setName();
 		results = new HashMap<String,ArrayList>();
+		summaries = new HashMap<String,HashMap>();
 		framesPendingMap = new HashMap<String, Integer>();
 		framesPending = 0;
 		initializeResults();
 	}
+	
+	public abstract void summarize();
 	
 	public abstract void setName();
 	
@@ -67,7 +73,7 @@ public abstract class BaseProcessor
 	{
 		try 
 		{
-			return JSONHelper.build(results);
+			return (JSONObject)JSONHelper.build(results);
 		} 
 		catch (JSONException je) 
 		{
@@ -76,11 +82,11 @@ public abstract class BaseProcessor
 		}	
 	}
 	
-	public ArrayList<JSONObject> getJSONResultsArrayList(long frameNo)
+	public JSONObject getJSONResultsObject(long frameNo)
 	{
 		try 
 		{
-			return JSONHelper.buildAsArrayList(results, frameNo);
+			return JSONHelper.buildFeaturesAsJSONObject(results, summaries, featureName, frameNo);
 		} 
 		catch (JSONException je) 
 		{
@@ -102,6 +108,22 @@ public abstract class BaseProcessor
 	public void addResult(Object result)
 	{
 		addResult(featureName, result);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void addToSummary(String featureName, String title, Object result)
+	{
+		if(!summaries.containsKey(featureName))
+		{
+			HashMap<String, Object> hash = new HashMap<String, Object>();
+			summaries.put(featureName, hash);
+		}
+		summaries.get(featureName).put(title, result.toString());
+	}
+	
+	public void addToSummary(String title, Object result)
+	{
+		addToSummary(featureName, title, result);
 	}
 	
 	private void incrementFramesPending(String featureName)

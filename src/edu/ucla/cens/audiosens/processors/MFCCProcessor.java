@@ -193,4 +193,10 @@ public class MFCCProcessor extends BaseProcessor
 		return 2595.0*Math.log10(1.0 + freq/700.0);
 	}
 
+	@Override
+	public void summarize() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

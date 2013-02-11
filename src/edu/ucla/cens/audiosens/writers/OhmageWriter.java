@@ -11,7 +11,6 @@ import edu.ucla.cens.audiosens.config.OhmageWriterConfig;
 import edu.ucla.cens.audiosens.helper.JSONHelper;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.OhmageProbeWriter;
-import edu.ucla.cens.audiosens.helper.PreferencesHelper;
 import edu.ucla.cens.audiosens.processors.BaseProcessor;
 import edu.ucla.cens.audiosens.sensors.BaseSensor;
 
@@ -36,27 +35,32 @@ public class OhmageWriter extends BaseWriter {
 	@Override
 	public void destroy() 
 	{
-		probeWriter.close();
+		try
+		{
+			probeWriter.close();
+		}
+		catch(Exception e)
+		{
+			Logger.e(LOGTAG,"Exception closing Ohmage Writer: "+e);
+		}
 		isConnected = false;
 	}
 
 	@Override
 	public void write(BaseProcessor processor, long frameNo) 
 	{
-		for(JSONObject jsonObject : processor.getJSONResultsArrayList(frameNo))
+		JSONObject jsonObject = processor.getJSONResultsObject(frameNo);
+		if (jsonObject != null)
 		{
-			if (jsonObject != null)
+			try 
 			{
-				try 
-				{
-					jsonObject.put("version", versionNo);
-				} 
-				catch (JSONException e) 
-				{
-					Logger.e(LOGTAG, "Exception :"+e);
-				}
-				probeWriter.writeFeatures(jsonObject, frameNo);
+				jsonObject.put("version", versionNo);
+			} 
+			catch (JSONException e) 
+			{
+				Logger.e(LOGTAG, "Exception :"+e);
 			}
+			probeWriter.writeFeatures(jsonObject, frameNo);
 		}
 	}
 

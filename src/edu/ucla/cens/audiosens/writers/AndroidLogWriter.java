@@ -42,7 +42,9 @@ public class AndroidLogWriter extends BaseWriter {
 	public void write(BaseProcessor processor, long frameNo) 
 	{
 		Logger.d(LOGTAG,"Writing in AndroidLogWriter");
-		writePerFeature(processor, frameNo);
+		JSONObject tempJson = processor.getJSONResultsObject(frameNo);;
+		if (tempJson != null)
+			Logger.i(DATATAG, tempJson.toString());
 	}
 
 	@Override
@@ -50,31 +52,16 @@ public class AndroidLogWriter extends BaseWriter {
 	{
 		JSONObject tempJson = JSONHelper.buildSensorJson(sensorMap, frameNo);
 		if(tempJson != null)
-			Logger.i(LOGTAG, tempJson.toString());
+			Logger.i(DATATAG, tempJson.toString());
 	}
 
-	private void writePerProcessor(BaseProcessor processor, long frameNo)
-	{
-		JSONObject tempJson = processor.getJSONResults(frameNo);
-		if (tempJson != null)
-			Logger.i(LOGTAG, tempJson.toString());
-	}
-
-	private void writePerFeature(BaseProcessor processor, long frameNo)
-	{
-		for(JSONObject jsonObject : processor.getJSONResultsArrayList(frameNo))
-		{
-			if (jsonObject != null)
-				Logger.i(LOGTAG, jsonObject.toString());
-		}
-	}
 
 	@Override
 	public void writeClassifier(BaseClassifier classifier, long frameNo) 
 	{
 		JSONObject jsonObject = classifier.getJSONResultsObject(frameNo);
 		if (jsonObject != null)
-			Logger.i(LOGTAG, jsonObject.toString());
+			Logger.i(DATATAG, jsonObject.toString());
 	}
 
 }

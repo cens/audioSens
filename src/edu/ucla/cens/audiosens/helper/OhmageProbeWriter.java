@@ -57,7 +57,6 @@ public class OhmageProbeWriter extends ProbeWriter
 				try 
 				{
 					locationJSON = data.getJSONObject("Location");
-
 					probe.withLocation(timestamp, 
 							TimeZone.getDefault().getID(),
 							locationJSON.getDouble("latitude"),
@@ -91,6 +90,26 @@ public class OhmageProbeWriter extends ProbeWriter
 					OhmageWriterConfig.OBSERVER_VERSION);
 			probe.setStream(OhmageWriterConfig.STREAM_CLASSIFIERS, 
 					OhmageWriterConfig.STREAM_CLASSIFIERS_VERSION);
+
+			probe.setData(data.toString());
+			probe.withTime(timestamp, TimeZone.getDefault().getID());
+			probe.withId();
+			probe.write(this);
+		} 
+		catch (RemoteException re) 
+		{
+			Logger.e(LOGTAG,"Exception: " + re);
+		}
+	}
+	
+	public void writeEvent(JSONObject data, long timestamp) 
+	{
+		try 
+		{
+			ProbeBuilder probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
+					OhmageWriterConfig.OBSERVER_VERSION);
+			probe.setStream(OhmageWriterConfig.STREAM_EVENTS, 
+					OhmageWriterConfig.STREAM_EVENTS_VERSION);
 
 			probe.setData(data.toString());
 			probe.withTime(timestamp, TimeZone.getDefault().getID());

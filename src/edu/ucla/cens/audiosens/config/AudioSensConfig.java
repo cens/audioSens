@@ -26,8 +26,12 @@ public final class AudioSensConfig
 	public final static int CONTINUOUSMODE_ALARM = 900;	//15 minutes
 	public final static int CONTINUOUSMODE_FLUSHTIME =  60; //1 minute
 	
+	//special Mode
+	public final static boolean SPECIALMODE_DEFAULT = false;
+	
 	//Features
 	public final static String[] FEATURES = {FeaturesList.ENERGY,
+											FeaturesList.ZCR,
 											FeaturesList.SPEECHINFERENCEFEATURES,
 											FeaturesList.MFCC};
 	
@@ -41,7 +45,8 @@ public final class AudioSensConfig
 	public final static String[] SENSORS = {"Location", "Battery"};
 	
 	//Raw Audio
-	public final static boolean RAWAUDIO = false;
+	public final static boolean RAWMODE_DEFAULT = false;
+	//public final static boolean RAWAUDIO = true;
 	public final static boolean RAWAUDIO_WRITEONLYSPEECH = true;
 	
 	//Intents
@@ -52,7 +57,7 @@ public final class AudioSensConfig
 	public final static String INFERENCERECEIVER_PERCENT = "speechInferencePercent";
 	
 	//Location
-	public final static int LOCATION_MINDISTANCE = 20;	//Minimum Distance between Location Updates (in meters)
-	public final static int LOCATION_MINTIME = 60 * 1000;	//Minimum Time between Location Updates (in ms)
+	public final static int LOCATION_MINDISTANCE = 0;	//Minimum Distance between Location Updates (in meters)
+	public final static int LOCATION_MINTIME = 30 * 1000;	//Minimum Time between Location Updates (in ms)
 
 }

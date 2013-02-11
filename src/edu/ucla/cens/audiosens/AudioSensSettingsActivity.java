@@ -1,5 +1,9 @@
 package edu.ucla.cens.audiosens;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.PreferencesHelper;
@@ -13,7 +17,7 @@ import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -24,11 +28,18 @@ public class AudioSensSettingsActivity extends Activity {
 
 	private SharedPreferences mSettings;
 	private SharedPreferences.Editor mEditor;
+	private boolean adminMode = false;
 	
 	ToggleButton enabledButton;
+	ToggleButton adminButton;
 	EditText period_et;
 	EditText duration_et;
-	CheckBox continuousMode_cb;
+	EditText specialstatus_et;
+	Button edit_b;
+	CheckBox specialMode_cb;
+	CheckBox continuousMode_cb;	
+	CheckBox rawMode_cb;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,24 +52,19 @@ public class AudioSensSettingsActivity extends Activity {
 
 		//Initialize UI Elements
 		enabledButton = (ToggleButton)findViewById(R.id.enabled_toggleButton);
+		adminButton = (ToggleButton)findViewById(R.id.admin_toggleButton);
+
 		period_et = (EditText)findViewById(R.id.period_et);
 		duration_et = (EditText)findViewById(R.id.duration_et);
+
+		specialMode_cb = (CheckBox)findViewById(R.id.specialmode_cb);
+		specialstatus_et = (EditText)findViewById(R.id.special_et);
+		edit_b = (Button)findViewById(R.id.edit_b);
+
 		continuousMode_cb = (CheckBox)findViewById(R.id.continuousmode_cb);
+		rawMode_cb = (CheckBox)findViewById(R.id.raw_cb);
 		
-		enabledButton.setChecked(mSettings.getBoolean(PreferencesHelper.ENABLED, false));
-		period_et.setText(mSettings.getInt(PreferencesHelper.PERIOD, AudioSensConfig.PERIOD)+"");
-		duration_et.setText(mSettings.getInt(PreferencesHelper.DURATION, AudioSensConfig.DURATION)+"");
-		continuousMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, AudioSensConfig.CONTINUOUSMODE_DEFAULT));
-		
-		//on Starting the activity
-		if(!enabledButton.isChecked())
-		{
-			enableDisableSettings(true);
-		}
-		else
-		{
-			enableDisableSettings(false);
-		}
+		refreshUI();
 		
 		//Listener for On Off Switch
 		enabledButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() 
@@ -97,7 +103,26 @@ public class AudioSensSettingsActivity extends Activity {
 			}
 		});
 		
-		//Listener for Continuous Swircg
+		//Listener for Admin Switch
+		adminButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() 
+		{
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
+			{
+				Logger.w("Admin CHECKED:"+isChecked);
+				adminMode = isChecked;
+				if(isChecked)
+				{
+					showAdminSettings(true);
+				}
+				else
+				{
+					showAdminSettings(false);
+				}
+			}
+		});
+		
+		//Listener for Continuous Mode
 		continuousMode_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() 
 		{
 			@Override
@@ -106,17 +131,35 @@ public class AudioSensSettingsActivity extends Activity {
 				Logger.w("CONTINUOUSRECORDING CHECKED:"+isChecked);
 				if(isChecked)
 				{
-					enableDisableNormalSettings(false);
+					enableDisableSampleSettings(false);
 				}
 				else
 				{
-					enableDisableNormalSettings(true);
+					enableDisableSampleSettings(true);
 				}
+			}
+		});
+		
+		//Listener for time Setting button
+		edit_b.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) 
+			{
+				Intent timeSettings_Intent = new Intent(AudioSensSettingsActivity.this, AudioSensTimeSettingsActivity.class);
+				startActivity(timeSettings_Intent);
 			}
 		});
 		
 	}
 
+	@Override
+	protected void onResume() 
+	{
+		super.onResume();
+		refreshUI();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -138,6 +181,42 @@ public class AudioSensSettingsActivity extends Activity {
 		}
 		return false;
 	}
+	
+	private void refreshUI()
+	{
+		enabledButton.setChecked(mSettings.getBoolean(PreferencesHelper.ENABLED, false));
+		adminButton.setChecked(adminMode);
+
+		period_et.setText(mSettings.getInt(PreferencesHelper.PERIOD, AudioSensConfig.PERIOD)+"");
+		duration_et.setText(mSettings.getInt(PreferencesHelper.DURATION, AudioSensConfig.DURATION)+"");
+		
+		specialMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.SPECIALMODE, AudioSensConfig.SPECIALMODE_DEFAULT));
+		specialstatus_et.setText(getSpecialStatus());
+		
+		continuousMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, AudioSensConfig.CONTINUOUSMODE_DEFAULT));
+		rawMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.RAWMODE, AudioSensConfig.RAWMODE_DEFAULT));
+
+		//on Starting the activity
+		if(!enabledButton.isChecked())
+		{
+			enableDisableSettings(true);
+		}
+		else
+		{
+			enableDisableSettings(false);
+		}
+		
+		//on Starting the activity
+		if(!adminButton.isChecked())
+		{
+			showAdminSettings(false);
+		}
+		else
+		{
+			showAdminSettings(true);
+		}
+	}
+	
 	
 	/*
 	 * Validates and Save Preferences
@@ -172,6 +251,8 @@ public class AudioSensSettingsActivity extends Activity {
 		mEditor.putInt(PreferencesHelper.PERIOD, period);
 		mEditor.putInt(PreferencesHelper.DURATION, duration);
 		mEditor.putBoolean(PreferencesHelper.CONTINUOUSMODE, continuousMode_cb.isChecked());
+		mEditor.putBoolean(PreferencesHelper.SPECIALMODE, specialMode_cb.isChecked());
+		mEditor.putBoolean(PreferencesHelper.RAWMODE, rawMode_cb.isChecked());
 		mEditor.commit();
 
 		return true;
@@ -185,17 +266,53 @@ public class AudioSensSettingsActivity extends Activity {
 			UIHelper.enableDisableView((View)findViewById(R.id.scrollView1),true);
 			if(continuousMode_cb.isChecked())
 			{
-				enableDisableNormalSettings(false);
+				enableDisableSampleSettings(false);
 			}
 		}
 		else
 			UIHelper.enableDisableView((View)findViewById(R.id.scrollView1),false);
 	}
 	
-	private void enableDisableNormalSettings(boolean enabled)
+	private void enableDisableSampleSettings(boolean enabled)
 	{
-		UIHelper.enableDisableView((View)findViewById(R.id.normalMode_tl),enabled);
+		UIHelper.enableDisableView((View)findViewById(R.id.samplingSettings_tl),enabled);
 	}
+	
+	private void showAdminSettings(boolean enabled)
+	{
+		UIHelper.hideShowView((View)findViewById(R.id.scrollView1),enabled);
+	}
+	
+	
+	
+	private String getSpecialStatus()
+	{
+		String op = "";
+		op = "Period:" + mSettings.getInt(PreferencesHelper.SPECIALPERIOD, AudioSensConfig.PERIOD)+"\n";
+		op += "Duration:" + mSettings.getInt(PreferencesHelper.SPECIALDURATION, AudioSensConfig.DURATION)+"\n";
+		op += "Active Time Ranges:";
+		
+		String saved = mSettings.getString(PreferencesHelper.TIMERANGE, "[]");
+		try 
+		{
+			JSONArray arr = new JSONArray(saved);
+			JSONObject obj;
+			for(int i= 0; i<arr.length(); i++)
+			{
+				obj = arr.getJSONObject(i);
+				String start = obj.getString("start");
+				String end = obj.getString("end");
+				op += "\n" + (i+1) + ". " + start + " to " + end;
+			}
+		} 
+		catch (JSONException e) 
+		{
+			e.printStackTrace();
+		}
+
+		return op;
+	}
+	
 	
 	
 	/*

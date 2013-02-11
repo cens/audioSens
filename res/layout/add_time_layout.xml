@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TableLayout
+        android:id="@+id/timeSettings_tl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:stretchColumns="*" >
+
+        <TableRow
+            android:id="@+id/TableRow13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/enable_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_span="3"
+                android:text="Enabled" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/TableRow11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/start_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="06:00" />
+
+            <TextView
+                android:id="@+id/TextView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="to"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Button
+                android:id="@+id/end_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="07:00" />
+        </TableRow>
+
+        <ImageView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#777777"
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:scaleType="fitXY" />
+
+    </TableLayout>
+
+</LinearLayout>

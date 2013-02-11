@@ -35,6 +35,28 @@
                     android:layout_height="wrap_content"
                     android:text="ToggleButton" />
             </TableRow>
+
+            <TableRow
+                android:id="@+id/admin_tr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/TextView02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admin Mode"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <ToggleButton
+                    android:id="@+id/admin_toggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ToggleButton"
+                    android:textOff="Disabled"
+                    android:textOn="Enabled" />
+            </TableRow>
+
         </TableLayout>
 
     </LinearLayout>
@@ -54,7 +76,7 @@
             android:orientation="vertical" >
 
             <TableLayout
-                android:id="@+id/generalSettings_tl"
+                android:id="@+id/samplingSettings_tl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
@@ -71,7 +93,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
-                        android:text="General Settings"
+                        android:text="Sampling Settings"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
                 </TableRow>
 
@@ -124,24 +146,59 @@
                 </TableLayout>
 
                 <TableLayout
-                    android:id="@+id/continuousMode_tl"
+                    android:id="@+id/specialmodeheader_tl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
                     android:stretchColumns="*" >
 
                     <TableRow
-                        android:id="@+id/continuous_tr"
+                        android:id="@+id/specialheader_tr"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:visibility="visible" >
 
                         <CheckBox
-                            android:id="@+id/continuousmode_cb"
+                            android:id="@+id/specialmode_cb"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Continuous Mode"
+                            android:text="Special Sampling"
                             android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <Button
+                            android:id="@+id/edit_b"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Edit" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/TableRow01"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible" >
+
+                        <EditText
+                            android:id="@+id/special_et"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_span="2"
+                            android:background="#d9d9d9"
+                            android:clickable="false"
+                            android:cursorVisible="false"
+                            android:ems="10"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:freezesText="false"
+                            android:inputType="textMultiLine"
+                            android:linksClickable="false"
+                            android:longClickable="false"
+                            android:scrollbars="vertical"
+                            android:width="1dp" >
+
+                        </EditText>
+
                     </TableRow>
 
                 </TableLayout>
@@ -168,6 +225,34 @@
                         android:layout_marginLeft="5dp"
                         android:text="Advanced Settings"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/continuous_tr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible" >
+
+                    <CheckBox
+                        android:id="@+id/continuousmode_cb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Continuous Mode"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/raw_tr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible" >
+
+                    <CheckBox
+                        android:id="@+id/raw_cb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Raw Audio Recording"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
 
             </TableLayout>

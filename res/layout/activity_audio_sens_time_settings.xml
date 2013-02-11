@@ -1,0 +1,379 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top"
+    tools:context=".AudioSensTimeSettingsActivity" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TableLayout
+                android:id="@+id/specialsamplingSettings_tl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:stretchColumns="*" >
+
+                <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
+                <LinearLayout
+                    android:layout_width="0px"
+                    android:layout_height="0px"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+
+                <TableRow
+                    android:id="@+id/heading1_tr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#c2c2c2" >
+
+                    <TextView
+                        android:id="@+id/heading1_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="Special Sampling Settings"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </TableRow>
+
+                <TableLayout
+                    android:id="@+id/normalMode_tl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:stretchColumns="*" >
+
+                    <TableRow
+                        android:id="@+id/specialperiod_tr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/specialperiod_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Period (in seconds)"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <EditText
+                            android:id="@+id/specialperiod_et"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="Alarm Interval"
+                            android:inputType="number" >
+
+                            <requestFocus />
+                        </EditText>
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/specialduration_tr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/specialduration_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Duration (in seconds)"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <EditText
+                            android:id="@+id/specialduration_et"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="Record Duration"
+                            android:inputType="number" />
+                    </TableRow>
+                </TableLayout>
+            </TableLayout>
+
+            <TableLayout
+                android:id="@+id/time_tl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:stretchColumns="*"
+                android:visibility="visible" >
+
+                <TableRow
+                    android:id="@+id/TableRow10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#c2c2c2" >
+
+                    <TextView
+                        android:id="@+id/TextView11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="Time Range"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                    <Button
+                        android:id="@+id/add_b"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout
+                android:id="@+id/time1Settings_tl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:stretchColumns="*"
+                android:visibility="gone" >
+
+                <TableRow
+                    android:id="@+id/heading2_tr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#c2c2c2" >
+
+                    <TextView
+                        android:id="@+id/heading2_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="Time Range 1"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/time_tr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible" >
+
+                    <CheckBox
+                        android:id="@+id/time_cb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enabled"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+
+                <TableLayout
+                    android:id="@+id/time1_tl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:stretchColumns="*" >
+
+                    <TableRow
+                        android:id="@+id/TableRow01"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/TextView02"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Start"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <TimePicker
+                            android:id="@+id/time_start"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/TableRow02"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/TextView01"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="End"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <TimePicker
+                            android:id="@+id/time1_end"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                </TableLayout>
+            </TableLayout>
+
+            <TableLayout
+                android:id="@+id/time2Settings_tl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:stretchColumns="*"
+                android:visibility="gone" >
+
+                <TableRow
+                    android:id="@+id/TableRow06"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#c2c2c2" >
+
+                    <TextView
+                        android:id="@+id/TextView08"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="Time Range 1"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/TableRow08"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible" >
+
+                    <CheckBox
+                        android:id="@+id/CheckBox01"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enabled"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+
+                <TableLayout
+                    android:id="@+id/TableLayout01"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:stretchColumns="*" >
+
+                    <TableRow
+                        android:id="@+id/TableRow09"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/TextView06"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Start"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <TimePicker
+                            android:id="@+id/TimePicker02"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/TableRow07"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/TextView07"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="End"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <TimePicker
+                            android:id="@+id/TimePicker01"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                </TableLayout>
+            </TableLayout>
+
+            <TableLayout
+                android:id="@+id/timeSettings3_tl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:stretchColumns="*"
+                android:visibility="gone" >
+
+                <TableRow
+                    android:id="@+id/TableRow03"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#c2c2c2" >
+
+                    <TextView
+                        android:id="@+id/TextView05"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="Time Range 2"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/time2_tr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible" >
+
+                    <CheckBox
+                        android:id="@+id/time2_cb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enabled"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+
+                <TableLayout
+                    android:id="@+id/time2_tl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:stretchColumns="*" >
+
+                    <TableRow
+                        android:id="@+id/TableRow05"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/TextView03"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Start"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <TimePicker
+                            android:id="@+id/time2_start"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/TableRow04"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/TextView04"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="End"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <TimePicker
+                            android:id="@+id/time2_end"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                </TableLayout>
+            </TableLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

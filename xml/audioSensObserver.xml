@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <observer>
     <id>org.ohmage.probes.audioSensProbe</id>
-    <version>6</version>
+    <version>9</version>
     
     <name>AudioSensProbe</name>
     <description>A probe to upload acoustic features and speech/non-speech inference</description>
-    <versionString>6.0</versionString>
+    <versionString>9.0</versionString>
     
     <stream>
         <id>features</id>
-        <version>6</version>
+        <version>9</version>
         
         <name>Audio Features</name>
         <description>This records the VersionNumber, Frame Number, Feature Name and an array of Data Points</description>
@@ -30,17 +30,47 @@
                         "type":"number"
                     },
 					{
-                        "name":"feature",
+                        "name":"name",
                         "doc":"Name of the Acoustic Feature",
                         "type":"string"
                     },
-					{
-                        "name":"data",
-                        "doc":"Array of data Points",
+                    {
+                        "name":"featureArray",
+                        "doc":"Array of subFeatures",
                         "type":"array",
 						"schema":{
-                            "type":"number"
-                        }
+		                       "doc":"subfeature",
+		                       "type":"object",
+		                       "schema":[
+		                       		{
+				                        "name":"name",
+				                        "doc":"Name of the Acoustic Feature",
+				                        "type":"string"
+				                    },
+			                       	{
+				                        "name":"data",
+				                        "doc":"Array of data Points",
+				                        "type":"array",
+										"schema":{
+				                            "type":"number"
+				                        }
+				                    },
+				                    {
+				                        "name":"summary",
+				                        "doc":"Summary of the subFeature",
+				                        "type":"object",
+				                        "optional":true,
+                        				"schema":[]
+				                    }
+		                    	]
+			                }
+                    },
+                    {
+                        "name":"summary",
+                        "doc":"Summary of the Acoustic Feature",
+                        "type":"object",
+                        "optional":true,
+                        "schema":[]
                     }
                 ]
             }
@@ -50,7 +80,7 @@
     
     <stream>
         <id>classifiers</id>
-        <version>6</version>
+        <version>9</version>
         
         <name>Classifiers</name>
         <description>This records the VersionNumber, Frame Number, Classifer Name and an array of Data Points</description>
@@ -82,6 +112,13 @@
 						"schema":{
                             "type":"number"
                         }
+                    },
+                    {
+                        "name":"summary",
+                        "doc":"Summary of the Classifier",
+                        "type":"object",
+                        "optional":true,
+                        "schema":[]
                     }
                 ]
             }
@@ -91,7 +128,7 @@
     
     <stream>
         <id>sensors</id>
-        <version>6</version>
+        <version>9</version>
         
         <name>Phone Sensors</name>
         <description>Data from sensors such as Location, Battery</description>
@@ -115,6 +152,7 @@
                         "name":"Location",
                         "doc":"location",
                         "type":"object",
+                        "optional":true,
                         "schema":[
 	                       	{
 		                        "name":"latitude",
@@ -142,6 +180,7 @@
                         "name":"Battery",
                         "doc":"Batery Sensor",
                         "type":"object",
+                        "optional":true,
                         "schema":[
 	                       	{
 		                        "name":"percent",
@@ -165,6 +204,51 @@
 	                    	}
 	                    ]
 	                }
+                ]
+            }
+        </schema>
+    </stream>
+    
+  	<stream>
+        <id>events</id>
+        <version>9</version>
+        
+        <name>Events</name>
+        <description>This records the phone events</description>
+		
+        <schema>
+            {
+                "type":"object",
+                "doc":"Events",
+                "schema":[
+					{
+                        "name":"version",
+                        "doc":"Version Number",
+                        "type":"string"
+                    },
+					{
+                        "name":"frameNo",
+                        "doc":"Frame Number , starting timestamp",
+                        "type":"number"
+                    },
+					{
+                        "name":"event",
+                        "doc":"Name of the Event",
+                        "type":"string"
+                    },
+					{
+                        "name":"subevent",
+                        "doc":"Name of the SubEvent",
+                        "optional":true,
+                        "type":"string"
+                    },
+                    {
+                        "name":"summary",
+                        "doc":"Summary of the Event",
+                        "optional":true,
+                        "type":"object",
+                        "schema":[]
+                    }
                 ]
             }
         </schema>

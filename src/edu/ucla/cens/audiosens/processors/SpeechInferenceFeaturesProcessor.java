@@ -62,5 +62,10 @@ public class SpeechInferenceFeaturesProcessor extends BaseProcessor
 	public void setName() {
 		setName("SpeechInferenceFeatures");
 	}
+	@Override
+	public void summarize() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

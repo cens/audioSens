@@ -20,5 +20,25 @@ public class UIHelper
 	        }
 	    }
 	}
+	
+	/*
+	 * Disables all elements in the viewGroup
+	 */
+	public static void hideShowView(View view, boolean visibility) 
+	{
+		if(visibility)
+			view.setVisibility(View.VISIBLE);
+		else
+			view.setVisibility(View.GONE);
+		
+	    if ( view instanceof ViewGroup ) 
+	    {
+	        ViewGroup group = (ViewGroup)view;
+	        for ( int idx = 0 ; idx < group.getChildCount() ; idx++ ) 
+	        {
+	        	hideShowView(group.getChildAt(idx), visibility);
+	        }
+	    }
+	}
 
 }

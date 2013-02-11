@@ -1,5 +1,6 @@
 package edu.ucla.cens.audiosens.processors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.ucla.cens.audiosens.helper.FeaturesList;
@@ -39,6 +40,24 @@ public class ZeroCrossingRateProcessor extends BaseProcessor
 	public void setName() 
 	{
 		setName(FeaturesList.ZCR);
+	}
+
+	@Override
+	public void summarize() 
+	{
+		@SuppressWarnings("rawtypes")
+		ArrayList tempList = results.get(featureName);
+		long sum = 0;
+		int count = 0;
+		for( int i = 0; i < tempList.size(); i++)
+		{
+			sum += (Long)tempList.get(i);
+			count++;
+		}
+		if(count>0)
+			sum /= count;
+		
+		addToSummary("average", sum+"");
 	}
 
 }

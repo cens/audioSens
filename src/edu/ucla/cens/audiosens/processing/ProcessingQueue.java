@@ -40,8 +40,6 @@ public class ProcessingQueue extends Thread
 
 	public ProcessingQueue(AudioSensRecorder obj, int frameSize, int frameStep, boolean continuousMode)
 	{
-		Logger.d(LOGTAG,"Constructor");
-
 		this.obj = obj;
 		this.frameSize = frameSize;
 		this.frameStep = frameStep;
@@ -121,7 +119,7 @@ public class ProcessingQueue extends Thread
 		stoppedOnce = false;
 		while(!queue.emptyq() || obj.isRecording())
 		{
-			Logger.d(LOGTAG,"Start of Processing Data Frame:"+obj.isRecording());
+			//Logger.d(LOGTAG,"Start of Processing Data Frame:"+obj.isRecording());
 
 			if(startedRecording && !obj.mSettings.getBoolean(PreferencesHelper.RECORDSTATUS, true))
 			{
@@ -155,15 +153,13 @@ public class ProcessingQueue extends Thread
 			{
 				processor.process(audioFrame);
 
-				Logger.d(LOGTAG, "Processing frame : "+processor.framesPending+"/"+queue.getQSize() + "for processor: " + processor.getName());
+				//Logger.d(LOGTAG, "Processing frame : "+processor.framesPending+"/"+queue.getQSize() + "for processor: " + processor.getName());
 			}
 
-			if(AudioSensConfig.RAWAUDIO)
+			if(obj.mSettings.getBoolean(PreferencesHelper.RAWMODE, AudioSensConfig.RAWMODE_DEFAULT))
 			{
 				processRawAudio(audioFrame);
 			}
-
-			Logger.d(LOGTAG, "End of Processing Loop");
 
 			for(BaseClassifier classifier : classifierMap.values())
 			{
@@ -182,14 +178,12 @@ public class ProcessingQueue extends Thread
 
 		}
 
-		Logger.d(LOGTAG,"FinishedProcessingQueue");
-		Logger.d(LOGTAG,"FinishedProcessingQueue2");
-
 	}
 
 	public void writeData()
 	{
 		Logger.d(LOGTAG,"In writeData");
+		summarizeProcessors();
 		for(BaseWriter writer : writerMap.values())
 		{
 			if(writer.isConnected())
@@ -218,7 +212,7 @@ public class ProcessingQueue extends Thread
 			}
 		}
 
-		if(AudioSensConfig.RAWAUDIO)
+		if(obj.mSettings.getBoolean(PreferencesHelper.RAWMODE, AudioSensConfig.RAWMODE_DEFAULT))
 		{
 			if(rawAudioFileWriter != null && !rawAudioFileWriter.hasPermanentlyFailed())
 				rawAudioFileWriter.write();
@@ -231,6 +225,14 @@ public class ProcessingQueue extends Thread
 	public void forceWrite()
 	{
 		forceWrite = true;
+	}
+	
+	public void summarizeProcessors()
+	{
+		for(BaseProcessor processor : resultMap.values())
+		{
+			processor.summarize();
+		}
 	}
 
 	public void cleanUpProcessors()

@@ -1,8 +1,14 @@
 package edu.ucla.cens.audiosens;
 
+import java.util.Date;
 import java.util.HashMap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
+import edu.ucla.cens.audiosens.helper.GeneralHelper;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.PreferencesHelper;
 import edu.ucla.cens.audiosens.sensors.BaseSensor;
@@ -44,7 +50,7 @@ public class AudioSensService extends Service {
 	private int duration;
 	private int period;
 	private boolean continuousMode;
-	
+
 	//HashMap for Sensors
 	HashMap<String, BaseSensor> sensorMap;
 
@@ -97,13 +103,12 @@ public class AudioSensService extends Service {
 				if(action.equals(ALARM_TAG)) 
 				{
 					Logger.d(LOGTAG,"Alarm Received");
-					loadFromSharedPreferences();
-					
+					schedule(false);
 					//If it is in continuous mode, Check every few minutes to check if the app is currently running
 					//If running, ignore the alarm, else start Recording
 					if(continuousMode && isActive())
 					{
-						Logger.d(LOGTAG,"Service already running in continuous mode");
+						Logger.w(LOGTAG,"Service already running in continuous mode");
 					}
 					else
 					{
@@ -112,7 +117,6 @@ public class AudioSensService extends Service {
 							public void run()
 							{
 								long startTime = System.currentTimeMillis();
-								Logger.w(LOGTAG,"Calling startRecording");
 								startRecording(startTime);
 							}
 						};
@@ -121,38 +125,16 @@ public class AudioSensService extends Service {
 				}
 				else if(action.equals(AudioSensConfig.AUTOSTART_TAG)) 
 				{
-					//TODO: check when to start
 					Logger.d(LOGTAG,"Boot Alarm Received");
 					if(mSettings.getBoolean(PreferencesHelper.ENABLED, false))
 					{
-						loadFromSharedPreferences();
-						long now = SystemClock.elapsedRealtime();
-						mAlarmManager.cancel(mScanSender);
-						if(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, false))
-						{
-							mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, AudioSensConfig.CONTINUOUSMODE_ALARM * 1000, mScanSender);
-						}
-						else
-						{
-							mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, period * 1000, mScanSender);
-						}
+						schedule(true);
 					}
 				}
 			}
 			else
 			{
-				loadFromSharedPreferences();
-				Logger.i(LOGTAG,"Null Intent received, Setting alarm for"+period);
-				long now = SystemClock.elapsedRealtime();
-				mAlarmManager.cancel(mScanSender);
-				if(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, false))
-				{
-					mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, AudioSensConfig.CONTINUOUSMODE_ALARM * 1000, mScanSender);
-				}
-				else
-				{
-					mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, period * 1000, mScanSender);
-				}
+				schedule(true);
 			}
 		}
 
@@ -179,6 +161,42 @@ public class AudioSensService extends Service {
 		cancelAllNotifications();
 		destroySensors();
 	}
+
+
+	/*
+	 * Schedules the alarms
+	 */
+	private void schedule(boolean firstTime)
+	{
+		long now = SystemClock.elapsedRealtime();
+		if(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, false))
+		{
+			if(firstTime)
+			{
+				mAlarmManager.cancel(mScanSender);
+				loadFromSharedPreferences();
+				mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, AudioSensConfig.CONTINUOUSMODE_ALARM * 1000, mScanSender);
+			}
+		}
+		else
+		{
+			if(firstTime || !isSameMode())
+			{
+				mAlarmManager.cancel(mScanSender);
+				loadFromSharedPreferences();
+				Logger.i(LOGTAG, "Setting Schedule to " + duration + "/" + period);
+				
+				long startTimeMillis;
+				if(firstTime)
+					startTimeMillis = now;
+				else
+					startTimeMillis = now + period * 1000;
+				
+				mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, startTimeMillis, period * 1000, mScanSender);
+			}
+		}
+	}
+
 
 	/**
 	 * Starts the actual recording
@@ -231,7 +249,7 @@ public class AudioSensService extends Service {
 		sendStatusBroadcast(false,null);
 		releaseWakeLock();
 	}
-	
+
 	private boolean isActive()
 	{
 		return mSettings.getBoolean(PreferencesHelper.RECORDSTATUS, false);
@@ -249,10 +267,11 @@ public class AudioSensService extends Service {
 	{
 		Logger.d(LOGTAG,"Service Force Stopped");
 
-		recorderInstance.setRecording(false);
+		if(recorderInstance != null)
+			recorderInstance.setRecording(false);
 		cleanup();
 	}
-	
+
 	private void createSensors()
 	{
 		for(String sensorName : AudioSensConfig.SENSORS)
@@ -260,7 +279,7 @@ public class AudioSensService extends Service {
 			if(!sensorMap.containsKey(sensorName))
 			{
 				BaseSensor sensor = SensorFactory.build(sensorName);
-				
+
 				if(sensor != null)
 				{
 					sensorMap.put(sensorName, sensor);
@@ -272,7 +291,7 @@ public class AudioSensService extends Service {
 			}
 		}
 	}
-	
+
 	private void initSensors()
 	{
 		for(BaseSensor sensor : sensorMap.values())
@@ -280,7 +299,7 @@ public class AudioSensService extends Service {
 			sensor.init(this);
 		}
 	}
-	
+
 	private void destroySensors()
 	{
 		for(BaseSensor sensor : sensorMap.values())
@@ -346,7 +365,7 @@ public class AudioSensService extends Service {
 		intent.putExtra(AudioSensConfig.STATUSRECEIVER_MSG, message);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
-	
+
 	public void sendSpeechInferenceBroadcast(double percent)
 	{
 		Intent intent = new Intent(AudioSensConfig.INFERENCERECEIVERTAG);
@@ -358,10 +377,63 @@ public class AudioSensService extends Service {
 	//load local variables from SharedPreferences
 	private void loadFromSharedPreferences()
 	{
-		period = mSettings.getInt(PreferencesHelper.PERIOD, AudioSensConfig.PERIOD);
-		duration = mSettings.getInt(PreferencesHelper.DURATION, AudioSensConfig.DURATION);
+		if(isSpecialMode())
+		{
+			period = mSettings.getInt(PreferencesHelper.SPECIALPERIOD, AudioSensConfig.PERIOD);
+			duration = mSettings.getInt(PreferencesHelper.SPECIALDURATION, AudioSensConfig.DURATION);
+			mEditor.putBoolean(PreferencesHelper.CURRENTSPECIALMODE, true);
+		}
+		else
+		{
+			period = mSettings.getInt(PreferencesHelper.PERIOD, AudioSensConfig.PERIOD);
+			duration = mSettings.getInt(PreferencesHelper.DURATION, AudioSensConfig.DURATION);
+			mEditor.putBoolean(PreferencesHelper.CURRENTSPECIALMODE, false);
+		}
+
+		mEditor.commit();
 		continuousMode = mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, false);
+
 	}
+
+
+	private boolean isSpecialMode()
+	{
+		if(mSettings.getBoolean(PreferencesHelper.SPECIALMODE, false))
+		{
+			String saved = mSettings.getString(PreferencesHelper.TIMERANGE, "[]");
+			try 
+			{
+				JSONArray arr = new JSONArray(saved);
+				JSONObject obj;
+				for(int i= 0; i<arr.length(); i++)
+				{
+					obj = arr.getJSONObject(i);
+					String start = obj.getString("start");
+					String end = obj.getString("end");
+					if(isNowBetween(start,end))
+						return true;
+				}
+			} 
+			catch (JSONException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return false;
+	}
+
+	private boolean isSameMode()
+	{
+		return !(isSpecialMode() ^  mSettings.getBoolean(PreferencesHelper.CURRENTSPECIALMODE, false));
+	}
+
+	public boolean isNowBetween(String start, String end)
+	{
+		final Date now = new Date();
+	    return now.after(GeneralHelper.dateFromHourMin(start)) && now.before(GeneralHelper.dateFromHourMin(end));
+	}
+
 
 	public String getVersionNo() 
 	{
