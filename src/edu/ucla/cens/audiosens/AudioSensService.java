@@ -14,6 +14,7 @@ import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.PreferencesHelper;
 import edu.ucla.cens.audiosens.sensors.BaseSensor;
 import edu.ucla.cens.audiosens.sensors.SensorFactory;
+import edu.ucla.cens.audiosens.sqlite.DatabaseHelper;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -45,6 +46,8 @@ public class AudioSensService extends Service {
 
 	AudioSensRecorder recorderInstance;
 	Thread recordThread;
+	
+	private DatabaseHelper db;
 
 	private String TAG = "audiosens";
 	private static final String ALARM_TAG = "audiosens_alarm";
@@ -90,6 +93,9 @@ public class AudioSensService extends Service {
 		sensorMap = new HashMap<String, BaseSensor>();
 		createSensors();
 		initSensors();
+		
+		//Database
+		db = new DatabaseHelper(this);
 	}
 
 	@Override
@@ -170,7 +176,7 @@ public class AudioSensService extends Service {
 	 * Schedules the alarms
 	 */
 	private void schedule(boolean firstTime)
-	{
+	{		
 		long now = SystemClock.elapsedRealtime();
 		if(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, false))
 		{
@@ -223,7 +229,7 @@ public class AudioSensService extends Service {
 
 		sendStatusBroadcast(true, null);
 
-		recorderInstance = new AudioSensRecorder(this, duration, continuousMode, startTime); 
+		recorderInstance = new AudioSensRecorder(this, duration, period, continuousMode, startTime); 
 		recordThread =new Thread(recorderInstance); 
 		recordThread.start();
 		recorderInstance.setRecording(true);
@@ -466,6 +472,11 @@ public class AudioSensService extends Service {
 	public String getVersionNo() 
 	{
 		return mSettings.getString(PreferencesHelper.VERSION, "0.0");
+	}
+	
+	public DatabaseHelper getDB()
+	{
+		return db;
 	}
 
 }

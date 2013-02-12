@@ -27,6 +27,7 @@ public class AudioSensRecorder implements Runnable
 	boolean continuousMode;
 	
 	int duration;	//length of recording
+	int period;		//not actually used
 	int frameSize;	//size of frame
 	int frameStep;	//0.5 * frameSize
 	int bSamples;
@@ -51,7 +52,7 @@ public class AudioSensRecorder implements Runnable
 	/*
 	 * Constructor for normal mode
 	 */
-	public AudioSensRecorder(AudioSensService obj, int duration, boolean continuousMode, long startTime)
+	public AudioSensRecorder(AudioSensService obj, int duration, int period, boolean continuousMode, long startTime)
 	{
 		this.obj = obj;
 		sensorMap = obj.sensorMap;
@@ -62,6 +63,7 @@ public class AudioSensRecorder implements Runnable
 		mEditor = mSettings.edit();
 		
 		this.duration = duration; 
+		this.period = period;
 		this.continuousMode = continuousMode;
 		frameSize = AudioSensConfig.FRAMELENGTH * 8;
 		frameStep = (int)frameSize/2;
@@ -243,6 +245,16 @@ public class AudioSensRecorder implements Runnable
 	public HashMap<String, BaseSensor> getSensorMap()
 	{
 		return sensorMap;
+	}
+	
+	public int getPeriod()
+	{
+		return period;
+	}
+	
+	public int getDuration()
+	{
+		return duration;
 	}
 	
 	private void initializeAudioParameters()

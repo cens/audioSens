@@ -3,13 +3,14 @@ package edu.ucla.cens.audiosens.classifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.content.SharedPreferences;
+import org.json.JSONArray;
 
 import edu.ucla.cens.audiosens.AudioSensRecorder;
 import edu.ucla.cens.audiosens.helper.FeaturesList;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.PreferencesHelper;
 import edu.ucla.cens.audiosens.processors.BaseProcessor;
+import edu.ucla.cens.audiosens.sqlite.SpeechInferenceObject;
 
 
 public class VoiceActivityDetectionClassifier extends BaseClassifier 
@@ -94,8 +95,26 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 	@Override
 	public void clearResults()
 	{
+		Logger.e("clearResults");
+		addToDatabase();
 		super.clearResults();
 		clearSpeechMode();
+	}
+	
+	private boolean getInference()
+	{
+		int current = 0;
+		int total = 0;
+		for(int i=0; i<results.size(); i++)
+		{
+		    total ++;
+		    if(results.get(i)>5)
+		    	current++;
+		}
+		if(total!=0 && current/total>0.25)
+			return true;
+		
+		return false;
 	}
 
 	private void updateSpeechMode(double secondInference)
@@ -116,6 +135,24 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 	private void notifyUI(double percent)
 	{
 		obj.getService().sendSpeechInferenceBroadcast(percent);
+	}
+	
+	private void addToDatabase()
+	{
+		JSONArray jsonArray = new JSONArray((ArrayList<Double>)results);
+		
+		int inference_int = 0;
+		if(getInference())
+			inference_int = 1;
+		
+		SpeechInferenceObject inference 
+			= new SpeechInferenceObject(obj.getFrameNo(),
+										obj.getService().getVersionNo(),
+										jsonArray.toString(),
+										inference_int,
+										obj.getPeriod(),
+										obj.getDuration());
+		obj.getService().getDB().addInference(inference);
 	}
 
 

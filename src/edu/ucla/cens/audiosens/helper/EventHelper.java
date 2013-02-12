@@ -98,6 +98,7 @@ public class EventHelper
 		probeWriter.connect();
 		probeWriter.writeEvent(json, timestamp);
 		probeWriter.close();
+		probeWriter = null;
 	}
 	
 	private static JSONObject initObject(String versionNo, String event)

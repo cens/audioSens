@@ -220,6 +220,7 @@ public class ProcessingQueue extends Thread
 
 		obj.setFrameNo();
 		cleanUpProcessors();
+		cleanUpClassifiers();
 	}
 
 	public void forceWrite()
