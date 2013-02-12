@@ -13,6 +13,10 @@ public final class AudioSensConfig
 	public final static boolean AUTOSTART = true;
 	public static final String AUTOSTART_TAG = "audiosens_boot";
 	
+	//Alarms
+	public static final String MAINSERVICE_TAG = "audiosens_start";
+	public static final String SUMMARIZER_TAG = "audiosens_summarizer";
+	
 	//Audio Settings
 	public final static int FRAMELENGTH =32;
 	public final static int INITIALQUEUESIZE = 200;

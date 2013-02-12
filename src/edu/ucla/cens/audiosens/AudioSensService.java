@@ -15,6 +15,7 @@ import edu.ucla.cens.audiosens.helper.PreferencesHelper;
 import edu.ucla.cens.audiosens.sensors.BaseSensor;
 import edu.ucla.cens.audiosens.sensors.SensorFactory;
 import edu.ucla.cens.audiosens.sqlite.DatabaseHelper;
+import edu.ucla.cens.audiosens.summarizers.SummarizerService;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -25,7 +26,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -38,7 +38,11 @@ public class AudioSensService extends Service {
 
 	private PowerManager.WakeLock wakeLock;
 	private AlarmManager mAlarmManager;
+	//AudioSensService
 	private PendingIntent mScanSender;
+	//HourlySummarizer
+	private PendingIntent summarizerPendingIntent;
+
 	private NotificationManager notificationManager;
 	private Notification notification;
 	private PendingIntent notificationIntent;
@@ -46,11 +50,10 @@ public class AudioSensService extends Service {
 
 	AudioSensRecorder recorderInstance;
 	Thread recordThread;
-	
+
 	private DatabaseHelper db;
 
 	private String TAG = "audiosens";
-	private static final String ALARM_TAG = "audiosens_alarm";
 	private int duration;
 	private int period;
 	private boolean continuousMode;
@@ -82,8 +85,13 @@ public class AudioSensService extends Service {
 		//AlarmManager
 		mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		Intent scanAlarmIntent = new Intent(AudioSensService.this,AudioSensService.class);
-		scanAlarmIntent.setAction(ALARM_TAG);
+		scanAlarmIntent.setAction(AudioSensConfig.MAINSERVICE_TAG);
 		mScanSender = PendingIntent.getService(AudioSensService.this,0, scanAlarmIntent, 0);
+
+		//Summarizers
+		Intent summarizerAlarmIntent = new Intent(getApplicationContext(), SummarizerService.class);
+		summarizerAlarmIntent.setAction(AudioSensConfig.SUMMARIZER_TAG);
+		summarizerPendingIntent = PendingIntent.getService(getApplicationContext(), 0, summarizerAlarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		//Notifications
 		notificationIntent = PendingIntent.getActivity(this, 0, new Intent(this, AudioSensActivity.class), 0);
@@ -93,7 +101,7 @@ public class AudioSensService extends Service {
 		sensorMap = new HashMap<String, BaseSensor>();
 		createSensors();
 		initSensors();
-		
+
 		//Database
 		db = new DatabaseHelper(this);
 	}
@@ -107,7 +115,7 @@ public class AudioSensService extends Service {
 			String action = intent.getAction();
 			if (action != null) 
 			{ 
-				if(action.equals(ALARM_TAG)) 
+				if(action.equals(AudioSensConfig.MAINSERVICE_TAG)) 
 				{
 					Logger.d(LOGTAG,"Alarm Received");
 					schedule(false);
@@ -153,6 +161,7 @@ public class AudioSensService extends Service {
 	@Override
 	public void onDestroy() 
 	{
+		super.onDestroy();
 		Logger.d(LOGTAG,"Service Destroyed");
 
 		if(!mSettings.getBoolean(PreferencesHelper.ENABLED, false))
@@ -166,6 +175,7 @@ public class AudioSensService extends Service {
 		}
 
 		mAlarmManager.cancel(mScanSender);
+		mAlarmManager.cancel(summarizerPendingIntent);
 		EventHelper.logDisableAppStatus(this, getVersionNo());
 		cancelAllNotifications();
 		destroySensors();
@@ -177,14 +187,14 @@ public class AudioSensService extends Service {
 	 */
 	private void schedule(boolean firstTime)
 	{		
-		long now = SystemClock.elapsedRealtime();
+		long now = System.currentTimeMillis();
 		if(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, false))
 		{
 			if(firstTime)
 			{
 				mAlarmManager.cancel(mScanSender);
 				loadFromSharedPreferences();
-				mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, AudioSensConfig.CONTINUOUSMODE_ALARM * 1000, mScanSender);
+				mAlarmManager.setRepeating (AlarmManager.RTC_WAKEUP, now, AudioSensConfig.CONTINUOUSMODE_ALARM * 1000, mScanSender);
 				EventHelper.logContinuousAppStatus(this, getVersionNo());
 			}
 		}
@@ -195,20 +205,26 @@ public class AudioSensService extends Service {
 				mAlarmManager.cancel(mScanSender);
 				loadFromSharedPreferences();
 				Logger.i(LOGTAG, "Setting Schedule to " + duration + "/" + period);
-				
+
 				long startTimeMillis;
 				if(firstTime)
 					startTimeMillis = now;
 				else
 					startTimeMillis = now + period * 1000;
-				
-				mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, startTimeMillis, period * 1000, mScanSender);
+
+				mAlarmManager.setRepeating (AlarmManager.RTC_WAKEUP, startTimeMillis, period * 1000, mScanSender);
 				EventHelper.logNormalAppStatus(this, getVersionNo(), period, duration);
 			}
 		}
-		
+
 		if(firstTime)
+		{
+			mAlarmManager.cancel(summarizerPendingIntent);
+			//TODO: change to inexactrepeating
+			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now, 10*1000, summarizerPendingIntent);
 			EventHelper.logAppStart(this, getVersionNo(), getJSONSettings());
+			Logger.e("firsttime");
+		}
 	}
 
 
@@ -445,7 +461,7 @@ public class AudioSensService extends Service {
 	private boolean isNowBetween(String start, String end)
 	{
 		final Date now = new Date();
-	    return now.after(GeneralHelper.dateFromHourMin(start)) && now.before(GeneralHelper.dateFromHourMin(end));
+		return now.after(GeneralHelper.dateFromHourMin(start)) && now.before(GeneralHelper.dateFromHourMin(end));
 	}
 
 	private JSONObject getJSONSettings()
@@ -473,7 +489,7 @@ public class AudioSensService extends Service {
 	{
 		return mSettings.getString(PreferencesHelper.VERSION, "0.0");
 	}
-	
+
 	public DatabaseHelper getDB()
 	{
 		return db;

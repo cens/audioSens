@@ -95,7 +95,6 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 	@Override
 	public void clearResults()
 	{
-		Logger.e("clearResults");
 		addToDatabase();
 		super.clearResults();
 		clearSpeechMode();
