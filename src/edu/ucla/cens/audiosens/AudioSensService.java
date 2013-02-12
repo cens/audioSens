@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
+import edu.ucla.cens.audiosens.helper.EventHelper;
 import edu.ucla.cens.audiosens.helper.GeneralHelper;
 import edu.ucla.cens.audiosens.helper.Logger;
 import edu.ucla.cens.audiosens.helper.PreferencesHelper;
@@ -126,6 +127,7 @@ public class AudioSensService extends Service {
 				else if(action.equals(AudioSensConfig.AUTOSTART_TAG)) 
 				{
 					Logger.d(LOGTAG,"Boot Alarm Received");
+					EventHelper.logBootUp(this, getVersionNo(), mSettings.getBoolean(PreferencesHelper.ENABLED, false));
 					if(mSettings.getBoolean(PreferencesHelper.ENABLED, false))
 					{
 						schedule(true);
@@ -158,6 +160,7 @@ public class AudioSensService extends Service {
 		}
 
 		mAlarmManager.cancel(mScanSender);
+		EventHelper.logDisableAppStatus(this, getVersionNo());
 		cancelAllNotifications();
 		destroySensors();
 	}
@@ -176,6 +179,7 @@ public class AudioSensService extends Service {
 				mAlarmManager.cancel(mScanSender);
 				loadFromSharedPreferences();
 				mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, now, AudioSensConfig.CONTINUOUSMODE_ALARM * 1000, mScanSender);
+				EventHelper.logContinuousAppStatus(this, getVersionNo());
 			}
 		}
 		else
@@ -193,8 +197,12 @@ public class AudioSensService extends Service {
 					startTimeMillis = now + period * 1000;
 				
 				mAlarmManager.setRepeating (AlarmManager.ELAPSED_REALTIME_WAKEUP, startTimeMillis, period * 1000, mScanSender);
+				EventHelper.logNormalAppStatus(this, getVersionNo(), period, duration);
 			}
 		}
+		
+		if(firstTime)
+			EventHelper.logAppStart(this, getVersionNo(), getJSONSettings());
 	}
 
 
@@ -428,12 +436,32 @@ public class AudioSensService extends Service {
 		return !(isSpecialMode() ^  mSettings.getBoolean(PreferencesHelper.CURRENTSPECIALMODE, false));
 	}
 
-	public boolean isNowBetween(String start, String end)
+	private boolean isNowBetween(String start, String end)
 	{
 		final Date now = new Date();
 	    return now.after(GeneralHelper.dateFromHourMin(start)) && now.before(GeneralHelper.dateFromHourMin(end));
 	}
 
+	private JSONObject getJSONSettings()
+	{
+		JSONObject json = new JSONObject();
+		try 
+		{
+			json.put("period", mSettings.getInt(PreferencesHelper.PERIOD, AudioSensConfig.PERIOD));
+			json.put("duration", mSettings.getInt(PreferencesHelper.DURATION, AudioSensConfig.DURATION));
+			json.put("specialPeriod", mSettings.getInt(PreferencesHelper.SPECIALPERIOD, AudioSensConfig.PERIOD));
+			json.put("specialDuration", mSettings.getInt(PreferencesHelper.SPECIALDURATION, AudioSensConfig.DURATION));
+			json.put("specialMode", mSettings.getBoolean(PreferencesHelper.SPECIALMODE, AudioSensConfig.SPECIALMODE_DEFAULT));
+			json.put("continuousMode", mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, AudioSensConfig.CONTINUOUSMODE_DEFAULT));
+			json.put("rawMode", mSettings.getBoolean(PreferencesHelper.RAWMODE, AudioSensConfig.RAWMODE_DEFAULT));
+			json.put("timeRange", mSettings.getString(PreferencesHelper.TIMERANGE, "[]"));
+		} 
+		catch (JSONException e) 
+		{
+			Logger.e(LOGTAG, "Exception creating jsonSettigs: "+e);
+		}
+		return json;
+	}
 
 	public String getVersionNo() 
 	{
