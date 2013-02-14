@@ -10,7 +10,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import edu.ucla.cens.audiosens.AudioSensService;
 import edu.ucla.cens.audiosens.config.AudioSensConfig;
-import edu.ucla.cens.audiosens.helper.Logger;
 
 public class LocationSensor extends BaseSensor
 {

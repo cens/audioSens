@@ -10,7 +10,6 @@ import edu.ucla.cens.audiosens.helper.PreferencesHelper;
 import edu.ucla.cens.audiosens.processing.AudioData.Flag;
 import edu.ucla.cens.audiosens.processors.BaseProcessor;
 import edu.ucla.cens.audiosens.processors.ProcessorFactory;
-import edu.ucla.cens.audiosens.sensors.BaseSensor;
 import edu.ucla.cens.audiosens.writers.BaseWriter;
 import edu.ucla.cens.audiosens.writers.WriterFactory;
 

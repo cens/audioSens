@@ -130,7 +130,7 @@ public class CircularQueue {
 		return qs;
 	}
 
-	private void printq() 
+	public void printq() 
 	{
 		System.out.print("Size: " + qs +
 				", rp: " + rp + ", fp: " + fp + ", q: ");

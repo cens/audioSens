@@ -2,9 +2,7 @@ package edu.ucla.cens.audiosens.processors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import edu.ucla.cens.audiosens.helper.FeaturesList;
-import edu.ucla.cens.audiosens.helper.Logger;
 
 public class EnergyProcessor extends BaseProcessor 
 {

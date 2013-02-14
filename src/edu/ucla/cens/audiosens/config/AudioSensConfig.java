@@ -40,7 +40,7 @@ public final class AudioSensConfig
 											FeaturesList.MFCC};
 	
 	//Writers
-	public final static String[] DATAWRITERS = {"AndroidLog"/*,"Ohmage"*/};
+	public final static String[] DATAWRITERS = {"AndroidLog","Ohmage"};
 	
 	//Classifiers
 	public final static String[] CLASSIFIERS = {"VoiceActivityDetection"};
