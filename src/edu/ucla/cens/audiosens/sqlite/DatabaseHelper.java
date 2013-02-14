@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper 
 {
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_NAME = "audioSens.db";
 	private static final String TABLE_INFERENCE = "inference";
 
@@ -83,6 +83,35 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	{
 		List<SpeechInferenceObject> inferenceList = new ArrayList<SpeechInferenceObject>();
 		String selectQuery = "SELECT  * FROM " + TABLE_INFERENCE;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) 
+		{
+			do 
+			{
+				SpeechInferenceObject inferenceObject = new SpeechInferenceObject();
+				inferenceObject.setId(Long.parseLong(cursor.getString(0)));
+				inferenceObject.setVersion(cursor.getString(1));
+				inferenceObject.setData(cursor.getString(2));
+				inferenceObject.setInference(Integer.parseInt(cursor.getString(3)));
+				inferenceObject.setPeriod(Integer.parseInt(cursor.getString(4)));
+				inferenceObject.setDuration(Integer.parseInt(cursor.getString(5)));
+				inferenceList.add(inferenceObject);
+			} while (cursor.moveToNext());
+		}
+
+		return inferenceList;
+	}
+	
+	public List<SpeechInferenceObject> getIntervalInferences(long start, long end) 
+	{
+		List<SpeechInferenceObject> inferenceList = new ArrayList<SpeechInferenceObject>();
+		String selectQuery = "SELECT  * FROM " + TABLE_INFERENCE 
+							+ " WHERE (" + KEY_ID + " > " + start + " AND "
+							+ KEY_ID + " < " + end + ")";
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);

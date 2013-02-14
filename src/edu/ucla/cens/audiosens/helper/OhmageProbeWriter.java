@@ -121,5 +121,26 @@ public class OhmageProbeWriter extends ProbeWriter
 			Logger.e(LOGTAG,"Exception: " + re);
 		}
 	}
+	
+	public void writeSummarizer(JSONObject data, long timestamp) 
+	{
+		try 
+		{
+			Logger.e("Writing summarizer");
+			ProbeBuilder probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
+					OhmageWriterConfig.OBSERVER_VERSION);
+			probe.setStream(OhmageWriterConfig.STREAM_SUMMARIZERS, 
+					OhmageWriterConfig.STREAM_SUMMARIZERS_VERSION);
+
+			probe.setData(data.toString());
+			probe.withTime(timestamp, TimeZone.getDefault().getID());
+			probe.withId();
+			probe.write(this);
+		} 
+		catch (RemoteException re) 
+		{
+			Logger.e(LOGTAG,"Exception: " + re);
+		}
+	}
 
 }

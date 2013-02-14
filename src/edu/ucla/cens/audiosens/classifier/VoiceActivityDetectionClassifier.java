@@ -107,10 +107,10 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 		for(int i=0; i<results.size(); i++)
 		{
 		    total ++;
-		    if(results.get(i)>5)
+		    if(results.get(i)>3)
 		    	current++;
 		}
-		if(total!=0 && current/total>0.25)
+		if(total!=0 && current*100/total>20)
 			return true;
 		
 		return false;

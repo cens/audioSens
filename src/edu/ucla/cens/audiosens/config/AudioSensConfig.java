@@ -6,8 +6,8 @@ import android.media.AudioFormat;
 public final class AudioSensConfig 
 {
 	//Initial Settings
-	public final static int PERIOD = 5;
-	public final static int DURATION = 1;
+	public final static int PERIOD = 60;
+	public final static int DURATION = 10;
 	
 	//AutoStart
 	public final static boolean AUTOSTART = true;
@@ -40,7 +40,7 @@ public final class AudioSensConfig
 											FeaturesList.MFCC};
 	
 	//Writers
-	public final static String[] DATAWRITERS = {"AndroidLog","Ohmage"};
+	public final static String[] DATAWRITERS = {"AndroidLog"/*,"Ohmage"*/};
 	
 	//Classifiers
 	public final static String[] CLASSIFIERS = {"VoiceActivityDetection"};

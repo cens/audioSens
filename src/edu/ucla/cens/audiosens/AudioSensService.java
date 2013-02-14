@@ -64,7 +64,6 @@ public class AudioSensService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO: Return the communication channel to the service.
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
@@ -141,7 +140,7 @@ public class AudioSensService extends Service {
 				else if(action.equals(AudioSensConfig.AUTOSTART_TAG)) 
 				{
 					Logger.d(LOGTAG,"Boot Alarm Received");
-					EventHelper.logBootUp(this, getVersionNo(), mSettings.getBoolean(PreferencesHelper.ENABLED, false));
+					EventHelper.logBootUp(getApplicationContext(), getVersionNo(), mSettings.getBoolean(PreferencesHelper.ENABLED, false));
 					if(mSettings.getBoolean(PreferencesHelper.ENABLED, false))
 					{
 						schedule(true);
@@ -176,7 +175,8 @@ public class AudioSensService extends Service {
 
 		mAlarmManager.cancel(mScanSender);
 		mAlarmManager.cancel(summarizerPendingIntent);
-		EventHelper.logDisableAppStatus(this, getVersionNo());
+		EventHelper.logDisableAppStatus(getApplicationContext(), getVersionNo());
+		EventHelper.destroy();
 		cancelAllNotifications();
 		destroySensors();
 	}
@@ -195,7 +195,7 @@ public class AudioSensService extends Service {
 				mAlarmManager.cancel(mScanSender);
 				loadFromSharedPreferences();
 				mAlarmManager.setRepeating (AlarmManager.RTC_WAKEUP, now, AudioSensConfig.CONTINUOUSMODE_ALARM * 1000, mScanSender);
-				EventHelper.logContinuousAppStatus(this, getVersionNo());
+				EventHelper.logContinuousAppStatus(getApplicationContext(), getVersionNo());
 			}
 		}
 		else
@@ -213,17 +213,16 @@ public class AudioSensService extends Service {
 					startTimeMillis = now + period * 1000;
 
 				mAlarmManager.setRepeating (AlarmManager.RTC_WAKEUP, startTimeMillis, period * 1000, mScanSender);
-				EventHelper.logNormalAppStatus(this, getVersionNo(), period, duration);
+				EventHelper.logNormalAppStatus(getApplicationContext(), getVersionNo(), period, duration);
 			}
 		}
 
 		if(firstTime)
 		{
 			mAlarmManager.cancel(summarizerPendingIntent);
-			//TODO: change to inexactrepeating
-			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now, 10*1000, summarizerPendingIntent);
-			EventHelper.logAppStart(this, getVersionNo(), getJSONSettings());
-			Logger.e("firsttime");
+			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now + 60*60*1000, AlarmManager.INTERVAL_HOUR, summarizerPendingIntent);
+			//mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now, 15*1000, summarizerPendingIntent);
+			EventHelper.logAppStart(getApplicationContext(), getVersionNo(), getJSONSettings());
 		}
 	}
 

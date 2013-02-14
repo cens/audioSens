@@ -16,5 +16,6 @@ public class PreferencesHelper
 	public static final String SPECIALPERIOD = "specialperiod_as";
 	public static final String SPECIALDURATION = "specialduration_as";
 	
+	public static final String PREVSEED = "timeseed_as";
 	public static final String SPEECHMODE = "speech_mode";
 }

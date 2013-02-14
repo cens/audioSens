@@ -11,7 +11,23 @@ import android.content.Context;
 public class EventHelper 
 {
 	private static String LOGTAG = "EventHelper";
+	static OhmageProbeWriter probeWriter;
 
+	public static void destroy()
+	{
+		if(probeWriter!=null)
+		{
+			try
+			{
+				probeWriter.close();
+			}
+			catch(Exception e)
+			{
+				Logger.e(LOGTAG,"Exception closing Ohmage Writer: "+e);
+			}
+		}
+	}
+	
 	public static void logBootUp(Context context, String versioNo, Boolean appEnabled)
 	{
 		JSONObject json = initObject(versioNo, "PhoneStatus", "BootingUp");
@@ -27,7 +43,7 @@ public class EventHelper
 		}
 		writeObject(context, json);
 	}
-	
+
 	public static void logNormalAppStatus(Context context, String versioNo, int period, int duration)
 	{
 		JSONObject json = initObject(versioNo, "AppStatus", "Enabled");
@@ -45,7 +61,7 @@ public class EventHelper
 		}
 		writeObject(context, json);
 	}
-	
+
 	public static void logContinuousAppStatus(Context context, String versioNo)
 	{
 		JSONObject json = initObject(versioNo, "AppStatus", "Enabled");
@@ -61,13 +77,13 @@ public class EventHelper
 		}
 		writeObject(context, json);
 	}
-	
+
 	public static void logDisableAppStatus(Context context, String versioNo)
 	{
 		JSONObject json = initObject(versioNo, "AppStatus", "Disabled");
 		writeObject(context, json);
 	}
-	
+
 	public static void logAppStart(Context context, String versioNo, JSONObject summary)
 	{
 		JSONObject json = initObject(versioNo, "AppStatus", "Starting");
@@ -81,7 +97,7 @@ public class EventHelper
 		}
 		writeObject(context, json);
 	}
-	
+
 	private static void writeObject(Context context, JSONObject json)
 	{
 		long timestamp;
@@ -93,19 +109,29 @@ public class EventHelper
 		{
 			timestamp = System.currentTimeMillis();
 		}
-		
-		OhmageProbeWriter probeWriter = new OhmageProbeWriter(context);
-		probeWriter.connect();
-		probeWriter.writeEvent(json, timestamp);
-		probeWriter.close();
-		probeWriter = null;
+
+		if(probeWriter==null)
+			probeWriter = new OhmageProbeWriter(context);
+		if(probeWriter.connect())
+		{
+			probeWriter.writeEvent(json, timestamp);
+			try
+			{
+				probeWriter.close();
+			}
+			catch(Exception e)
+			{
+				Logger.e(LOGTAG,"Exception closing Ohmage Writer: "+e);
+			}
+		}
 	}
 	
+
 	private static JSONObject initObject(String versionNo, String event)
 	{
 		return initObject(versionNo, event, null);
 	}
-	
+
 	private static JSONObject initObject(String versionNo, String event, String subevent)
 	{
 		JSONObject json = new JSONObject();
