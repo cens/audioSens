@@ -7,6 +7,10 @@ import edu.ucla.cens.audiosens.helper.FeaturesList;
 public class EnergyProcessor extends BaseProcessor 
 {
 	public static final String LOGTAG = "EnergyProcessor";
+	short[] data_short;
+	@SuppressWarnings("rawtypes")
+	ArrayList tempList;
+	
 	public EnergyProcessor() 
 	{
 		super();
@@ -16,7 +20,7 @@ public class EnergyProcessor extends BaseProcessor
 	public void process(Object data, HashMap<String, String> options) 
 	{
 
-		short[] data_short = (short[])data;
+		data_short = (short[])data;
 		long sum=0;
 		for (int i = 0; i < data_short.length; i++) 
 		{
@@ -34,8 +38,7 @@ public class EnergyProcessor extends BaseProcessor
 	@Override
 	public void summarize() 
 	{
-		@SuppressWarnings("rawtypes")
-		ArrayList tempList = results.get(featureName);
+		tempList = results.get(featureName);
 		long sum = 0;
 		int count = 0;
 		for( int i = 0; i < tempList.size(); i++)

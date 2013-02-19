@@ -15,6 +15,9 @@ public class SpeechInferenceFeaturesProcessor extends BaseProcessor
 	private native void audioFeatureExtractionInit();
 	private native void audioFeatureExtractionDestroy();
 	
+	short[] data_short;
+	double[] tempResults;
+	
 	public SpeechInferenceFeaturesProcessor() 
 	{
 		super();
@@ -25,8 +28,9 @@ public class SpeechInferenceFeaturesProcessor extends BaseProcessor
 	@Override
 	public void process(Object data, HashMap<String, String> options) 
 	{
-		short[] data_short = (short[])data;
-		double[] tempResults = features(data_short);
+		data_short = (short[])data;
+		//TODO: rectify excessive object creation
+		tempResults = features(data_short);
 		addResult(FeaturesList.NUMCORPEAKS, tempResults[0]);
 		addResult(FeaturesList.MAXCORPEAK, tempResults[1]);
 		addResult(FeaturesList.MAXCORPEAKLAG, tempResults[2]);

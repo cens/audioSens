@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.StreamTokenizer;
 
+import android.util.Log;
+
 /**
    Jama = Java Matrix class.
 <P>
@@ -736,6 +738,39 @@ public class Matrix
 		Matrix X = new Matrix(m,B.n);
 		double[][] C = X.getArray();
 		double[] Bcolj = new double[n];
+		for (int j = 0; j < B.n; j++) {
+			for (int k = 0; k < n; k++) {
+				Bcolj[k] = B.A[k][j];
+			}
+			for (int i = 0; i < m; i++) {
+				double[] Arowi = A[i];
+				double s = 0;
+				for (int k = 0; k < n; k++) {
+					s += Arowi[k]*Bcolj[k];
+				}
+				C[i][j] = s;
+			}
+		}
+		return X;
+	}
+
+
+	public Matrix timesWithResult (Matrix B, Matrix X, double[] Bcolj) {
+		if (B.m != n) {
+			throw new IllegalArgumentException("Matrix inner dimensions must agree.");
+		}
+		if(X == null || (X.m != m) || (X.n != B.n))
+		{
+			X = new Matrix(m,B.n);
+		}
+
+		double[][] C = X.getArray();
+		
+		if(Bcolj == null || Bcolj.length!=n)
+		{
+			Bcolj = new double[n];
+		}
+		
 		for (int j = 0; j < B.n; j++) {
 			for (int k = 0; k < n; k++) {
 				Bcolj[k] = B.A[k][j];

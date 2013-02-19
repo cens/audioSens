@@ -13,6 +13,8 @@ import edu.ucla.cens.audiosens.helper.Matrix;
 public class MFCCProcessor extends BaseProcessor 
 {
 	public static final String LOGTAG = "MFCCProcessor";
+	
+	short[] data_short;
 
 	private static int FFTSIZE = AudioSensConfig.FRAMELENGTH * 8;
 	private static int NUMCOEFFS = 12;
@@ -33,6 +35,17 @@ public class MFCCProcessor extends BaseProcessor
 	private FFT fft;
 	double fftBufferR[];
 	double fftBufferI[];
+	double[] ceps;
+	Matrix powerSpec;
+	Matrix aSpec;
+	Matrix logMelSpec;
+	Matrix melCeps;
+	
+	//temp intermediate variables
+	double[] aSpec_inter;
+	double[] melCeps_inter;
+	String[] mfccName;
+	Integer tempInt;
 	
 	public MFCCProcessor() 
 	{
@@ -43,7 +56,8 @@ public class MFCCProcessor extends BaseProcessor
 	@Override
 	public void process(Object data, HashMap<String, String> options) 
 	{
-		short[] data_short = (short[])data;
+		
+		data_short = (short[])data;
 		
 		// Frequency analysis
 		Arrays.fill(fftBufferR, 0);
@@ -61,7 +75,6 @@ public class MFCCProcessor extends BaseProcessor
 		// In-place FFT
 		fft.fft(fftBufferR, fftBufferI);
 		
-		Matrix powerSpec = new Matrix(numFreqs, 1);
 		for (int i = 0; i < numFreqs; i ++)
 		{
 			powerSpec.A[i][0] = fftBufferR[i]*fftBufferR[i] + fftBufferI[i]*fftBufferI[i];
@@ -74,24 +87,25 @@ public class MFCCProcessor extends BaseProcessor
 		// dctMat     - numCoeffs x melBands
 		// dctMat*log(aSpec) - numCoeffs x 1
 
-		Matrix aSpec = melWeights.times(powerSpec);
-		Matrix logMelSpec = new Matrix(melBands, 1);
+		aSpec = melWeights.timesWithResult(powerSpec, aSpec, aSpec_inter);
+		
 		for (int i = 0; i < melBands; i ++)
 		{
 			logMelSpec.A[i][0] = Math.log(aSpec.A[i][0]);
 		}
 
-		Matrix melCeps = dctMat.times(logMelSpec);
+		melCeps = dctMat.timesWithResult(logMelSpec, melCeps, melCeps_inter);
+		
 
-		double[] ceps = new double[numCoeffs];
 		for (int i = 0; i < numCoeffs; i ++)
 		{
 			ceps[i] = lifterWeights[i]*melCeps.A[i][0];
 		}
 		
+		
 		for(int i = 0; i < NUMCOEFFS; i++)
 		{
-			addResult(FeaturesList.MFCC + i, ceps[i]);
+			addResult(mfccName[i], ceps[i]);
 		}
 	}
 
@@ -180,6 +194,18 @@ public class MFCCProcessor extends BaseProcessor
 		for (int i = 1; i < numCoeffs; i ++)
 		{
 			lifterWeights[i] = Math.pow((double)i, lifterExp);
+		}
+		
+		powerSpec = new Matrix(numFreqs, 1);
+		logMelSpec = new Matrix(melBands, 1);
+		ceps = new double[numCoeffs];
+		aSpec_inter = new double[melWeights.getColumnDimension()];
+		melCeps_inter = new double[dctMat.getColumnDimension()];
+		tempInt = new Integer(0);
+		mfccName = new String[NUMCOEFFS];
+		for(int i=0; i<NUMCOEFFS; i++)
+		{
+			mfccName[i] = FeaturesList.MFCC + i;
 		}
 	}
 

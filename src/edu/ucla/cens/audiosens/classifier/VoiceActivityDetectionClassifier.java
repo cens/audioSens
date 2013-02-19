@@ -22,7 +22,8 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 	long currentCount;
 	long currentSpeech;
 	long prevSecond;
-
+	ArrayList<Double> tempArr;
+	
 	public VoiceActivityDetectionClassifier() 
 	{
 		super();
@@ -181,13 +182,13 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 	{
 		if(resultMap.containsKey(FeaturesList.SPEECHINFERENCEFEATURES))
 		{
-			ArrayList<Double> arr = resultMap.get(FeaturesList.SPEECHINFERENCEFEATURES)
+			tempArr = resultMap.get(FeaturesList.SPEECHINFERENCEFEATURES)
 					.getResults()
 					.get(featureName);
-			if(arr.size()>0)
-				return arr.get(arr.size() - 1);
+			if(tempArr.size()>0)
+				return tempArr.get(tempArr.size() - 1);
 		}
-		throw new NullPointerException("Cannot oad value for " + featureName);
+		throw new NullPointerException("Cannot odd value for " + featureName);
 	}
 
 

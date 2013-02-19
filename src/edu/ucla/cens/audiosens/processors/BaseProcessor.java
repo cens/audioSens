@@ -97,6 +97,7 @@ public abstract class BaseProcessor
 	@SuppressWarnings("unchecked")
 	public void addResult(String featureName, Object result)
 	{
+		//TODO: decrease new object creation
 		if(results.containsKey(featureName))
 		{
 			results.get(featureName).add(result);
