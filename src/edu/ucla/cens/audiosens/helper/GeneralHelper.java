@@ -10,7 +10,7 @@ public class GeneralHelper
 {
 	public static Date dateFromHourMin(final String hhmm)
 	{
-	    if (hhmm.matches("^[0-2][0-4]:[0-5][0-9]$"))
+	    if (hhmm.matches("^[0-2][0-9]:[0-5][0-9]$"))
 	    {
 	        final String[] hms = hhmm.split(":");
 	        final GregorianCalendar gc = new GregorianCalendar();
@@ -23,7 +23,7 @@ public class GeneralHelper
 	    }
 	    else
 	    {
-	        throw new IllegalArgumentException(hhmm + " is not a valid time, expecting HH:MM format");
+	        throw new IllegalArgumentException(hhmm + " is not a valid time, expecting HH:MM format"+hhmm.length());
 	    }
 	}
 

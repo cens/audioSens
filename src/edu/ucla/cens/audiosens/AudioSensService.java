@@ -229,20 +229,15 @@ public class AudioSensService extends Service {
 	{
 		if(mSettings.getBoolean(PreferencesHelper.SPEECHTRIGGERMODE, AudioSensConfig.SPEECHTRIGGERMODE_DEFAULT))
 		{
-			Logger.e("triggering........");
-
 			boolean prev = mSettings.getBoolean(PreferencesHelper.FRAMEISSPEECH, false);
 			int prev_count = mSettings.getInt(PreferencesHelper.NOFPREVFRAMESSIMILIAR, 0);
 			double trigger = 1;
 			if(prev && prev_count > AudioSensConfig.SPEECHTRIGGER)
 			{
 				trigger = mSettings.getFloat(PreferencesHelper.SPEECHRATE, 1);
-				Logger.e("Speech trigger........");
 			}
 			else if(!prev && prev_count > AudioSensConfig.SILENCETRIGGER)
 			{
-				Logger.e("Silenttrigger........");
-
 				trigger = mSettings.getFloat(PreferencesHelper.SILENCERATE, 1);
 			}
 			
@@ -255,7 +250,6 @@ public class AudioSensService extends Service {
 		}
 		else
 		{
-			Logger.e("Normal trigger........");
 			return duration;
 		}
 	}
