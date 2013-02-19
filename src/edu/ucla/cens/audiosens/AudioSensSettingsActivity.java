@@ -29,23 +29,27 @@ public class AudioSensSettingsActivity extends Activity {
 	private SharedPreferences mSettings;
 	private SharedPreferences.Editor mEditor;
 	private boolean adminMode = false;
-	
+
 	ToggleButton enabledButton;
 	ToggleButton adminButton;
 	EditText period_et;
 	EditText duration_et;
 	EditText specialstatus_et;
+	EditText silencerate_et;
+	EditText speechrate_et;
 	Button edit_b;
 	CheckBox specialMode_cb;
+	CheckBox speechtriggerMode_cb;
 	CheckBox continuousMode_cb;	
 	CheckBox rawMode_cb;
-	
-	
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_audio_sens_settings);
-		
+		setTitle("AudioSens- Settings");
+
 		//Shared Preferences
 		mSettings = PreferenceManager.getDefaultSharedPreferences(this);   
 		mEditor = mSettings.edit();
@@ -61,11 +65,16 @@ public class AudioSensSettingsActivity extends Activity {
 		specialstatus_et = (EditText)findViewById(R.id.special_et);
 		edit_b = (Button)findViewById(R.id.edit_b);
 
+		speechtriggerMode_cb= (CheckBox)findViewById(R.id.speechtrigger_cb);
+		speechrate_et = (EditText)findViewById(R.id.speechrate_et);
+		silencerate_et = (EditText)findViewById(R.id.silencerate_et);
+
+
 		continuousMode_cb = (CheckBox)findViewById(R.id.continuousmode_cb);
 		rawMode_cb = (CheckBox)findViewById(R.id.raw_cb);
-		
+
 		refreshUI();
-		
+
 		//Listener for On Off Switch
 		enabledButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() 
 		{
@@ -81,12 +90,12 @@ public class AudioSensSettingsActivity extends Activity {
 						buttonView.setChecked(!isChecked);
 						return;
 					}
-					
+
 					//Disable Editing
 					enableDisableSettings(false);
 					mEditor.putBoolean(PreferencesHelper.ENABLED, true);
 					mEditor.commit();
-					
+
 					Toast.makeText(getApplicationContext(), "Recording Service started", Toast.LENGTH_SHORT).show();
 					startService(new Intent(AudioSensSettingsActivity.this, AudioSensService.class));
 				}
@@ -102,7 +111,7 @@ public class AudioSensSettingsActivity extends Activity {
 				}
 			}
 		});
-		
+
 		//Listener for Admin Switch
 		adminButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() 
 		{
@@ -121,7 +130,7 @@ public class AudioSensSettingsActivity extends Activity {
 				}
 			}
 		});
-		
+
 		//Listener for Continuous Mode
 		continuousMode_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() 
 		{
@@ -139,10 +148,10 @@ public class AudioSensSettingsActivity extends Activity {
 				}
 			}
 		});
-		
+
 		//Listener for time Setting button
 		edit_b.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) 
 			{
@@ -150,7 +159,7 @@ public class AudioSensSettingsActivity extends Activity {
 				startActivity(timeSettings_Intent);
 			}
 		});
-		
+
 	}
 
 	@Override
@@ -159,14 +168,14 @@ public class AudioSensSettingsActivity extends Activity {
 		super.onResume();
 		refreshUI();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_audio_sens_settings, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) 
 	{
@@ -181,7 +190,7 @@ public class AudioSensSettingsActivity extends Activity {
 		}
 		return false;
 	}
-	
+
 	private void refreshUI()
 	{
 		enabledButton.setChecked(mSettings.getBoolean(PreferencesHelper.ENABLED, false));
@@ -189,10 +198,14 @@ public class AudioSensSettingsActivity extends Activity {
 
 		period_et.setText(mSettings.getInt(PreferencesHelper.PERIOD, AudioSensConfig.PERIOD)+"");
 		duration_et.setText(mSettings.getInt(PreferencesHelper.DURATION, AudioSensConfig.DURATION)+"");
-		
+
 		specialMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.SPECIALMODE, AudioSensConfig.SPECIALMODE_DEFAULT));
 		specialstatus_et.setText(getSpecialStatus());
-		
+
+		speechtriggerMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.SPEECHTRIGGERMODE, AudioSensConfig.SPEECHTRIGGERMODE_DEFAULT));
+		speechrate_et.setText(mSettings.getFloat(PreferencesHelper.SPEECHRATE, 1)+"");
+		silencerate_et.setText(mSettings.getFloat(PreferencesHelper.SILENCERATE, 1)+"");
+
 		continuousMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, AudioSensConfig.CONTINUOUSMODE_DEFAULT));
 		rawMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.RAWMODE, AudioSensConfig.RAWMODE_DEFAULT));
 
@@ -205,7 +218,7 @@ public class AudioSensSettingsActivity extends Activity {
 		{
 			enableDisableSettings(false);
 		}
-		
+
 		//on Starting the activity
 		if(!adminButton.isChecked())
 		{
@@ -216,8 +229,8 @@ public class AudioSensSettingsActivity extends Activity {
 			showAdminSettings(true);
 		}
 	}
-	
-	
+
+
 	/*
 	 * Validates and Save Preferences
 	 */
@@ -235,30 +248,51 @@ public class AudioSensSettingsActivity extends Activity {
 			displayMessage("Input Error", "Use integer values as input for Period and Duration");
 			return false;
 		}
-		
+
 		if(period <= 0 || duration <= 0)
 		{
 			displayMessage("Input Error", "Use non-zero integer values as input for Period and Duration");
 			return false;
 		}
-		
+
 		if(duration > period)
 		{
 			displayMessage("Input Error", "Period should be greater than or equal to the Recording Duration");
 			return false;
 		}
 		
+		float speechRate, silenceRate;
+		try
+		{
+			speechRate = Float.parseFloat(speechrate_et.getText().toString());
+			silenceRate = Float.parseFloat(silencerate_et.getText().toString());
+		}
+		catch(NumberFormatException ne)
+		{
+			displayMessage("Input Error", "Use numberic values as input for Speech and Silence Rates");
+			return false;
+		}
+
+		if(speechRate ==0 || silenceRate == 0)
+		{
+			displayMessage("Input Error", "Use non-zero integer values as inputs for Speech and Silence Rates");
+			return false;
+		}
+
 		mEditor.putInt(PreferencesHelper.PERIOD, period);
 		mEditor.putInt(PreferencesHelper.DURATION, duration);
 		mEditor.putBoolean(PreferencesHelper.CONTINUOUSMODE, continuousMode_cb.isChecked());
 		mEditor.putBoolean(PreferencesHelper.SPECIALMODE, specialMode_cb.isChecked());
+		mEditor.putBoolean(PreferencesHelper.SPEECHTRIGGERMODE, speechtriggerMode_cb.isChecked());
 		mEditor.putBoolean(PreferencesHelper.RAWMODE, rawMode_cb.isChecked());
+		mEditor.putFloat(PreferencesHelper.SPEECHRATE, speechRate);
+		mEditor.putFloat(PreferencesHelper.SILENCERATE, silenceRate);
 		mEditor.commit();
 
 		return true;
 	}
-	
-	
+
+
 	private void enableDisableSettings(boolean enabled)
 	{
 		if(enabled)
@@ -272,26 +306,26 @@ public class AudioSensSettingsActivity extends Activity {
 		else
 			UIHelper.enableDisableView((View)findViewById(R.id.scrollView1),false);
 	}
-	
+
 	private void enableDisableSampleSettings(boolean enabled)
 	{
 		UIHelper.enableDisableView((View)findViewById(R.id.samplingSettings_tl),enabled);
 	}
-	
+
 	private void showAdminSettings(boolean enabled)
 	{
 		UIHelper.hideShowView((View)findViewById(R.id.scrollView1),enabled);
 	}
-	
-	
-	
+
+
+
 	private String getSpecialStatus()
 	{
 		String op = "";
 		op = "Period:" + mSettings.getInt(PreferencesHelper.SPECIALPERIOD, AudioSensConfig.PERIOD)+"\n";
 		op += "Duration:" + mSettings.getInt(PreferencesHelper.SPECIALDURATION, AudioSensConfig.DURATION)+"\n";
 		op += "Active Time Ranges:";
-		
+
 		String saved = mSettings.getString(PreferencesHelper.TIMERANGE, "[]");
 		try 
 		{
@@ -312,9 +346,9 @@ public class AudioSensSettingsActivity extends Activity {
 
 		return op;
 	}
-	
-	
-	
+
+
+
 	/*
 	 * Pops up a message Box
 	 */

@@ -131,7 +131,7 @@ public class AudioSensService extends Service {
 							public void run()
 							{
 								long startTime = System.currentTimeMillis();
-								startRecording(startTime);
+								startRecording(startTime, getDuration(period,duration));
 							}
 						};
 						t.start();
@@ -225,12 +225,47 @@ public class AudioSensService extends Service {
 			EventHelper.logAppStart(getApplicationContext(), getVersionNo(), getJSONSettings());
 		}
 	}
+	
+	public int getDuration(int period, int duration)
+	{
+		if(mSettings.getBoolean(PreferencesHelper.SPEECHTRIGGERMODE, AudioSensConfig.SPEECHTRIGGERMODE_DEFAULT))
+		{
+			Logger.e("triggering........");
+
+			boolean prev = mSettings.getBoolean(PreferencesHelper.FRAMEISSPEECH, false);
+			int prev_count = mSettings.getInt(PreferencesHelper.NOFPREVFRAMESSIMILIAR, 0);
+			double trigger = 1;
+			if(prev && prev_count > AudioSensConfig.SPEECHTRIGGER)
+			{
+				trigger = mSettings.getFloat(PreferencesHelper.SPEECHRATE, 1);
+				Logger.e("Speech trigger........");
+			}
+			else if(!prev && prev_count > AudioSensConfig.SILENCETRIGGER)
+			{
+				Logger.e("Silenttrigger........");
+
+				trigger = mSettings.getFloat(PreferencesHelper.SILENCERATE, 1);
+			}
+			
+			int temp_duration = (int)(duration * trigger);
+			if(temp_duration<1)
+				temp_duration = 1;
+			if(temp_duration>period)
+				temp_duration = period;
+			return temp_duration;
+		}
+		else
+		{
+			Logger.e("Normal trigger........");
+			return duration;
+		}
+	}
 
 
 	/**
 	 * Starts the actual recording
 	 */
-	private synchronized void startRecording(long startTime)
+	private synchronized void startRecording(long startTime, int duration)
 	{
 		Logger.w(LOGTAG,"StartRecording");
 
@@ -476,6 +511,9 @@ public class AudioSensService extends Service {
 			json.put("continuousMode", mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, AudioSensConfig.CONTINUOUSMODE_DEFAULT));
 			json.put("rawMode", mSettings.getBoolean(PreferencesHelper.RAWMODE, AudioSensConfig.RAWMODE_DEFAULT));
 			json.put("timeRange", mSettings.getString(PreferencesHelper.TIMERANGE, "[]"));
+			json.put("speechtriggerMode", mSettings.getBoolean(PreferencesHelper.SPEECHTRIGGERMODE, AudioSensConfig.SPEECHTRIGGERMODE_DEFAULT));
+			json.put("silenceRate", mSettings.getFloat(PreferencesHelper.SILENCERATE, 1));
+			json.put("speechRate", mSettings.getFloat(PreferencesHelper.SPEECHRATE, 1));
 		} 
 		catch (JSONException e) 
 		{

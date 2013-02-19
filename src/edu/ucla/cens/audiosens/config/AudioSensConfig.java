@@ -33,6 +33,13 @@ public final class AudioSensConfig
 	//special Mode
 	public final static boolean SPECIALMODE_DEFAULT = false;
 	
+	//Speech Trigger mode
+	public final static boolean SPEECHTRIGGERMODE_DEFAULT = false;
+	public final static float SPEECHRATE_DEFAULT = 1;
+	public final static float SILENCERATE_DEFAULT = 1;
+	public final static int SPEECHTRIGGER = 3;
+	public final static int SILENCETRIGGER = 5;
+	
 	//Features
 	public final static String[] FEATURES = {FeaturesList.ENERGY,
 											FeaturesList.ZCR,

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONArray;
-
 import edu.ucla.cens.audiosens.AudioSensRecorder;
 import edu.ucla.cens.audiosens.helper.FeaturesList;
 import edu.ucla.cens.audiosens.helper.Logger;
@@ -96,6 +95,7 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 	public void clearResults()
 	{
 		addToDatabase();
+		addToPreferences();
 		super.clearResults();
 		clearSpeechMode();
 	}
@@ -110,7 +110,7 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 		    if(results.get(i)>3)
 		    	current++;
 		}
-		if(total!=0 && current*100/total>20)
+		if(total!=0 && current*100/total>10)
 			return true;
 		
 		return false;
@@ -152,6 +152,27 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 										obj.getPeriod(),
 										obj.getDuration());
 		obj.getService().getDB().addInference(inference);
+	}
+	
+	private void addToPreferences()
+	{
+		boolean speech = getInference();
+		boolean prev = obj.mSettings.getBoolean(PreferencesHelper.FRAMEISSPEECH, false);
+		int prev_count = obj.mSettings.getInt(PreferencesHelper.NOFPREVFRAMESSIMILIAR, 0);
+		
+		if((speech && prev) || (!speech && !prev))
+		{
+			prev_count++;
+		}
+		else
+		{
+			prev_count = 1;
+			obj.mEditor.putBoolean(PreferencesHelper.FRAMEISSPEECH, speech);
+		}
+		Logger.e("Speech:"+speech + " : " + prev_count);
+		
+		obj.mEditor.putInt(PreferencesHelper.NOFPREVFRAMESSIMILIAR, prev_count);
+		obj.mEditor.commit();
 	}
 
 
