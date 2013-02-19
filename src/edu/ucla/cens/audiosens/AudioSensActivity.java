@@ -133,10 +133,13 @@ public class AudioSensActivity extends Activity {
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() 
 	{
+		String action;
+		double percent;
+		
 		@Override
 		public void onReceive(Context context, Intent intent) 
 		{
-			String action = intent.getAction();
+			action = intent.getAction();
 			if(action.equals(AudioSensConfig.STATUSRECEIVERTAG))
 			{
 				recordStatus = intent.getBooleanExtra(AudioSensConfig.STATUSRECEIVER_RECORD, false);
@@ -153,7 +156,7 @@ public class AudioSensActivity extends Activity {
 			else if(action.equals(AudioSensConfig.INFERENCERECEIVERTAG))
 			{
 				setSpeechVisibility(true);
-				double percent = intent.getDoubleExtra(AudioSensConfig.INFERENCERECEIVER_PERCENT, -1);
+				percent = intent.getDoubleExtra(AudioSensConfig.INFERENCERECEIVER_PERCENT, -1);
 				updateSpeechPercent(percent);
 			}
 		}

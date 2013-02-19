@@ -16,6 +16,7 @@ import edu.ucla.cens.audiosens.config.OhmageWriterConfig;
 public class OhmageProbeWriter extends ProbeWriter 
 {
 	static final String LOGTAG = "OhmageProbeWriter";
+	ProbeBuilder probe;
 
 	public OhmageProbeWriter(Context context) 
 	{
@@ -26,7 +27,7 @@ public class OhmageProbeWriter extends ProbeWriter
 	{
 		try 
 		{
-			ProbeBuilder probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
+			probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
 					OhmageWriterConfig.OBSERVER_VERSION);
 			probe.setStream(OhmageWriterConfig.STREAM_FEATURES, 
 					OhmageWriterConfig.STREAM_FEATURES_VERSION);
@@ -46,7 +47,7 @@ public class OhmageProbeWriter extends ProbeWriter
 	{
 		try 
 		{
-			ProbeBuilder probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
+			probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
 					OhmageWriterConfig.OBSERVER_VERSION);
 			probe.setStream(OhmageWriterConfig.STREAM_SENSORS, 
 					OhmageWriterConfig.STREAM_SENSORS_VERSION);
@@ -86,7 +87,7 @@ public class OhmageProbeWriter extends ProbeWriter
 	{
 		try 
 		{
-			ProbeBuilder probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
+			probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
 					OhmageWriterConfig.OBSERVER_VERSION);
 			probe.setStream(OhmageWriterConfig.STREAM_CLASSIFIERS, 
 					OhmageWriterConfig.STREAM_CLASSIFIERS_VERSION);
@@ -106,7 +107,7 @@ public class OhmageProbeWriter extends ProbeWriter
 	{
 		try 
 		{
-			ProbeBuilder probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
+			probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
 					OhmageWriterConfig.OBSERVER_VERSION);
 			probe.setStream(OhmageWriterConfig.STREAM_EVENTS, 
 					OhmageWriterConfig.STREAM_EVENTS_VERSION);
@@ -127,7 +128,7 @@ public class OhmageProbeWriter extends ProbeWriter
 		try 
 		{
 			Logger.e("Writing summarizer");
-			ProbeBuilder probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
+			probe = new ProbeBuilder(OhmageWriterConfig.OBSERVER_ID, 
 					OhmageWriterConfig.OBSERVER_VERSION);
 			probe.setStream(OhmageWriterConfig.STREAM_SUMMARIZERS, 
 					OhmageWriterConfig.STREAM_SUMMARIZERS_VERSION);

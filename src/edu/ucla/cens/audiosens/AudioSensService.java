@@ -60,7 +60,7 @@ public class AudioSensService extends Service {
 
 	//HashMap for Sensors
 	HashMap<String, BaseSensor> sensorMap;
-
+	
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -153,7 +153,6 @@ public class AudioSensService extends Service {
 			}
 		}
 
-		//TODO : Verify
 		return START_NOT_STICKY;
 	}
 

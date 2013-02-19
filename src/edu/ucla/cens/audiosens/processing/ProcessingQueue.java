@@ -151,7 +151,6 @@ public class ProcessingQueue extends Thread
 			for(BaseProcessor processor : resultMap.values())
 			{
 				processor.process(audioFrame);
-
 				//Logger.d(LOGTAG, "Processing frame : "+processor.framesPending+"/"+queue.getQSize() + "for processor: " + processor.getName());
 			}
 
@@ -162,7 +161,6 @@ public class ProcessingQueue extends Thread
 
 			for(BaseClassifier classifier : classifierMap.values())
 			{
-				//processor.process(audioFrame);
 				classifier.classify(resultMap);
 			}
 

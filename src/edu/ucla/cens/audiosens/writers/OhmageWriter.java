@@ -19,6 +19,7 @@ public class OhmageWriter extends BaseWriter {
 	private final static String LOGTAG = "OhmageWriter";
 	OhmageProbeWriter probeWriter;
 	String versionNo;
+	JSONObject jsonObject;
 
 	@Override
 	public void initialize(AudioSensService service) 
@@ -49,7 +50,7 @@ public class OhmageWriter extends BaseWriter {
 	@Override
 	public void write(BaseProcessor processor, long frameNo) 
 	{
-		JSONObject jsonObject = processor.getJSONResultsObject(frameNo);
+		jsonObject = processor.getJSONResultsObject(frameNo);
 		if (jsonObject != null)
 		{
 			try 
@@ -67,7 +68,7 @@ public class OhmageWriter extends BaseWriter {
 	@Override
 	public void writeSensors(HashMap<String, BaseSensor> sensorMap, long frameNo) 
 	{
-		JSONObject jsonObject = JSONHelper.buildSensorJson(sensorMap, frameNo);
+		jsonObject = JSONHelper.buildSensorJson(sensorMap, frameNo);
 		if(jsonObject != null)
 		{
 			try 
@@ -85,7 +86,7 @@ public class OhmageWriter extends BaseWriter {
 	@Override
 	public void writeClassifier(BaseClassifier classifier, long frameNo) 
 	{
-		JSONObject jsonObject = classifier.getJSONResultsObject(frameNo);
+		jsonObject = classifier.getJSONResultsObject(frameNo);
 		if (jsonObject != null)
 		{
 			try 
