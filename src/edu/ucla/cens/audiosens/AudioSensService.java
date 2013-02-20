@@ -1,5 +1,6 @@
 package edu.ucla.cens.audiosens;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -60,7 +61,9 @@ public class AudioSensService extends Service {
 
 	//HashMap for Sensors
 	HashMap<String, BaseSensor> sensorMap;
-	
+
+	//Firsttime
+	boolean firstTime = true;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -103,6 +106,9 @@ public class AudioSensService extends Service {
 
 		//Database
 		db = new DatabaseHelper(this);
+
+		//Local
+		firstTime = true;	
 	}
 
 	@Override
@@ -117,24 +123,31 @@ public class AudioSensService extends Service {
 				if(action.equals(AudioSensConfig.MAINSERVICE_TAG)) 
 				{
 					Logger.d(LOGTAG,"Alarm Received");
-					schedule(false);
-					//If it is in continuous mode, Check every few minutes to check if the app is currently running
-					//If running, ignore the alarm, else start Recording
-					if(continuousMode && isActive())
+					if(!firstTime)
 					{
-						Logger.w(LOGTAG,"Service already running in continuous mode");
+						schedule();
+						//If it is in continuous mode, Check every few minutes to check if the app is currently running
+						//If running, ignore the alarm, else start Recording
+						if(continuousMode && isActive())
+						{
+							Logger.w(LOGTAG,"Service already running in continuous mode");
+						}
+						else
+						{
+							Thread t = new Thread()
+							{
+								public void run()
+								{
+									long startTime = System.currentTimeMillis();
+									startRecording(startTime, getDuration(period,duration));
+								}
+							};
+							t.start();
+						}
 					}
 					else
 					{
-						Thread t = new Thread()
-						{
-							public void run()
-							{
-								long startTime = System.currentTimeMillis();
-								startRecording(startTime, getDuration(period,duration));
-							}
-						};
-						t.start();
+						schedule();
 					}
 				}
 				else if(action.equals(AudioSensConfig.AUTOSTART_TAG)) 
@@ -143,13 +156,13 @@ public class AudioSensService extends Service {
 					EventHelper.logBootUp(getApplicationContext(), getVersionNo(), mSettings.getBoolean(PreferencesHelper.ENABLED, false));
 					if(mSettings.getBoolean(PreferencesHelper.ENABLED, false))
 					{
-						schedule(true);
+						schedule();
 					}
 				}
 			}
 			else
 			{
-				schedule(true);
+				schedule();
 			}
 		}
 
@@ -172,6 +185,7 @@ public class AudioSensService extends Service {
 			mEditor.commit();
 		}
 
+		cleanup();
 		mAlarmManager.cancel(mScanSender);
 		mAlarmManager.cancel(summarizerPendingIntent);
 		EventHelper.logDisableAppStatus(getApplicationContext(), getVersionNo());
@@ -180,11 +194,18 @@ public class AudioSensService extends Service {
 		destroySensors();
 	}
 
+	@Override
+	public void onLowMemory()	
+	{
+		super.onLowMemory();
+		Logger.e("onLow Memory");
+	}
+
 
 	/*
 	 * Schedules the alarms
 	 */
-	private void schedule(boolean firstTime)
+	private void schedule()
 	{		
 		long now = System.currentTimeMillis();
 		if(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, false))
@@ -219,12 +240,13 @@ public class AudioSensService extends Service {
 		if(firstTime)
 		{
 			mAlarmManager.cancel(summarizerPendingIntent);
-			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now + 60*60*1000, AlarmManager.INTERVAL_HOUR, summarizerPendingIntent);
-			//mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now, 15*1000, summarizerPendingIntent);
+			//mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now, AlarmManager.INTERVAL_HOUR, summarizerPendingIntent);
+			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now, 180*1000, summarizerPendingIntent);
 			EventHelper.logAppStart(getApplicationContext(), getVersionNo(), getJSONSettings());
+			firstTime = false;
 		}
 	}
-	
+
 	public int getDuration(int period, int duration)
 	{
 		if(mSettings.getBoolean(PreferencesHelper.SPEECHTRIGGERMODE, AudioSensConfig.SPEECHTRIGGERMODE_DEFAULT))
@@ -240,7 +262,7 @@ public class AudioSensService extends Service {
 			{
 				trigger = mSettings.getFloat(PreferencesHelper.SILENCERATE, 1);
 			}
-			
+
 			int temp_duration = (int)(duration * trigger);
 			if(temp_duration<1)
 				temp_duration = 1;
@@ -260,8 +282,14 @@ public class AudioSensService extends Service {
 	 */
 	private synchronized void startRecording(long startTime, int duration)
 	{
-		Logger.w(LOGTAG,"StartRecording");
-
+		Logger.w(LOGTAG,"StartRecording:"+duration);
+		//TODO: remove
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(mSettings.getLong("temp1", 0));
+		Logger.w("Last summarizer: "+cal.getTime());
+		cal.setTimeInMillis(mSettings.getLong("temp2", 0));
+		Logger.w("Last summarizer Ran: "+cal.getTime());
+		
 		if(continuousMode)
 			setNotification(NotificationLevel.GREEN, "AudioSens Running", "Capturing audio continuously");
 		else

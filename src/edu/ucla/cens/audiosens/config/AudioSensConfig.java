@@ -37,14 +37,14 @@ public final class AudioSensConfig
 	public final static boolean SPEECHTRIGGERMODE_DEFAULT = false;
 	public final static float SPEECHRATE_DEFAULT = 1;
 	public final static float SILENCERATE_DEFAULT = 1;
-	public final static int SPEECHTRIGGER = 3;
-	public final static int SILENCETRIGGER = 5;
+	public final static int SPEECHTRIGGER = 2;
+	public final static int SILENCETRIGGER = 3;
 	
 	//Features
 	public final static String[] FEATURES = {FeaturesList.ENERGY,
 											FeaturesList.ZCR,
-											FeaturesList.SPEECHINFERENCEFEATURES,
-											FeaturesList.MFCC};
+											FeaturesList.SPEECHINFERENCEFEATURES/*,
+											FeaturesList.MFCC*/};
 	
 	//Writers
 	public final static String[] DATAWRITERS = {"AndroidLog","Ohmage"};

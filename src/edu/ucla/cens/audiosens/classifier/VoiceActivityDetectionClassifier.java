@@ -170,7 +170,7 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 			prev_count = 1;
 			obj.mEditor.putBoolean(PreferencesHelper.FRAMEISSPEECH, speech);
 		}
-		Logger.e("Speech:"+speech + " : " + prev_count);
+		Logger.w("Speech:"+speech + " : " + prev_count);
 		
 		obj.mEditor.putInt(PreferencesHelper.NOFPREVFRAMESSIMILIAR, prev_count);
 		obj.mEditor.commit();
