@@ -155,6 +155,7 @@ public class AudioSensSettingsActivity extends Activity {
 			@Override
 			public void onClick(View v) 
 			{
+				savePreferences();
 				Intent timeSettings_Intent = new Intent(AudioSensSettingsActivity.this, AudioSensTimeSettingsActivity.class);
 				startActivity(timeSettings_Intent);
 			}
@@ -203,8 +204,8 @@ public class AudioSensSettingsActivity extends Activity {
 		specialstatus_et.setText(getSpecialStatus());
 
 		speechtriggerMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.SPEECHTRIGGERMODE, AudioSensConfig.SPEECHTRIGGERMODE_DEFAULT));
-		speechrate_et.setText(mSettings.getFloat(PreferencesHelper.SPEECHRATE, 1)+"");
-		silencerate_et.setText(mSettings.getFloat(PreferencesHelper.SILENCERATE, 1)+"");
+		speechrate_et.setText(mSettings.getFloat(PreferencesHelper.SPEECHRATE, AudioSensConfig.SPEECHRATE_DEFAULT)+"");
+		silencerate_et.setText(mSettings.getFloat(PreferencesHelper.SILENCERATE, AudioSensConfig.SILENCERATE_DEFAULT)+"");
 
 		continuousMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.CONTINUOUSMODE, AudioSensConfig.CONTINUOUSMODE_DEFAULT));
 		rawMode_cb.setChecked(mSettings.getBoolean(PreferencesHelper.RAWMODE, AudioSensConfig.RAWMODE_DEFAULT));

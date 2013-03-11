@@ -30,12 +30,14 @@ public class AudioSensActivity extends Activity {
 	private boolean appStatus;
 	private TextView recordStatus_tv;
 	private TextView appStatus_tv;
+	private TextView version_tv;
 	private TableRow speechInference_tr;
 	private TextView speechInference_tv;
 	
 	private boolean broadcastRegistered;
 	private LocalBroadcastManager localBoradcastManager;
 	private IntentFilter iFilter;
+	private String versionNo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -50,7 +52,7 @@ public class AudioSensActivity extends Activity {
 		//Getting Version Number, If it is a new version number, clear all Settings
 		try
 		{
-			String versionNo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+			versionNo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
 			String versionNo_stored = mSettings.getString(PreferencesHelper.VERSION, "0.0");
 			if(!versionNo.equals(versionNo_stored))
 			{
@@ -72,11 +74,13 @@ public class AudioSensActivity extends Activity {
 		
 		appStatus_tv = (TextView)findViewById(R.id.appStatus_tv);
 		recordStatus_tv = (TextView)findViewById(R.id.recordingStatus_tv);
+		version_tv = (TextView)findViewById(R.id.version_tv);
 		speechInference_tr = (TableRow)findViewById(R.id.speechPercent_tr);
 		speechInference_tv = (TextView)findViewById(R.id.speechPercent_tv);
 		
 		updateAppStatus();
 		updateRecordStatus();
+		version_tv.setText(versionNo);
 	}
 
 	@Override

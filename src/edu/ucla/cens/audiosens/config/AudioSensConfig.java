@@ -34,20 +34,20 @@ public final class AudioSensConfig
 	public final static boolean SPECIALMODE_DEFAULT = false;
 	
 	//Speech Trigger mode
-	public final static boolean SPEECHTRIGGERMODE_DEFAULT = false;
-	public final static float SPEECHRATE_DEFAULT = 1;
+	public final static boolean SPEECHTRIGGERMODE_DEFAULT = true;
+	public final static float SPEECHRATE_DEFAULT = 3;
 	public final static float SILENCERATE_DEFAULT = 1;
 	public final static int SPEECHTRIGGER = 2;
-	public final static int SILENCETRIGGER = 3;
+	public final static int SILENCETRIGGER = 5;
 	
 	//Features
 	public final static String[] FEATURES = {FeaturesList.ENERGY,
 											FeaturesList.ZCR,
-											FeaturesList.SPEECHINFERENCEFEATURES/*,
-											FeaturesList.MFCC*/};
+											FeaturesList.SPEECHINFERENCEFEATURES,
+											FeaturesList.MFCC};
 	
 	//Writers
-	public final static String[] DATAWRITERS = {"AndroidLog","Ohmage"};
+	public final static String[] DATAWRITERS = {/*"AndroidLog",*/"Ohmage"};
 	
 	//Classifiers
 	public final static String[] CLASSIFIERS = {"VoiceActivityDetection"};

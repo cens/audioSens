@@ -256,11 +256,11 @@ public class AudioSensService extends Service {
 			double trigger = 1;
 			if(prev && prev_count > AudioSensConfig.SPEECHTRIGGER)
 			{
-				trigger = mSettings.getFloat(PreferencesHelper.SPEECHRATE, 1);
+				trigger = mSettings.getFloat(PreferencesHelper.SPEECHRATE, AudioSensConfig.SPEECHRATE_DEFAULT);
 			}
 			else if(!prev && prev_count > AudioSensConfig.SILENCETRIGGER)
 			{
-				trigger = mSettings.getFloat(PreferencesHelper.SILENCERATE, 1);
+				trigger = mSettings.getFloat(PreferencesHelper.SILENCERATE, AudioSensConfig.SILENCERATE_DEFAULT);
 			}
 
 			int temp_duration = (int)(duration * trigger);
@@ -533,8 +533,8 @@ public class AudioSensService extends Service {
 			json.put("rawMode", mSettings.getBoolean(PreferencesHelper.RAWMODE, AudioSensConfig.RAWMODE_DEFAULT));
 			json.put("timeRange", mSettings.getString(PreferencesHelper.TIMERANGE, "[]"));
 			json.put("speechtriggerMode", mSettings.getBoolean(PreferencesHelper.SPEECHTRIGGERMODE, AudioSensConfig.SPEECHTRIGGERMODE_DEFAULT));
-			json.put("silenceRate", mSettings.getFloat(PreferencesHelper.SILENCERATE, 1));
-			json.put("speechRate", mSettings.getFloat(PreferencesHelper.SPEECHRATE, 1));
+			json.put("silenceRate", mSettings.getFloat(PreferencesHelper.SILENCERATE, AudioSensConfig.SILENCERATE_DEFAULT));
+			json.put("speechRate", mSettings.getFloat(PreferencesHelper.SPEECHRATE, AudioSensConfig.SPEECHRATE_DEFAULT));
 		} 
 		catch (JSONException e) 
 		{
