@@ -1,4 +1,4 @@
-audioSens
+AudioSens
 =========
 AudioSens in an Android Probe to help collect, process and visualize acoustic data obtained from the participant's smart-phone. This consists of an Android application which can extract audio features in real-time and perform various inferences on the extracted features. This data is then uploaded to the Ohmage server \cite{ohmage}. The data can be visualized in the web application 'audioSensWeb'.
 
@@ -27,7 +27,7 @@ Sensors are used to process and log information from the other sensors on the ph
 <ul>
 <li>Location Sensor: This logs information about the current Network-based location. </li>
 <li>Battery Sensor: This logs the current battery state information.</li>
-</ul?
+</ul>
 
 
 <h6>3. Classifiers</h6>
@@ -60,3 +60,14 @@ The major settings of the application are:
 
 
 <h4>Deployment Instructions</h4>
+<ol>
+<li>Clone the project</li>
+<li>Change the basic configuration for the Android Application in the file "AudioSensConfig.java"</li>
+<li>The Observer definition file "audioSensObserver.xml" is located under the "xml" sub-directory. Upload this file to the required Ohmage Server. For information about steps to do the same are present in the OhamgeServer Wiki, under the Observer sub-section. In case the observer is already present, use Update instead of Create. Change the version numbers after every change.</li>
+<li>The settings related to the Observer can be set in the file "OhmageWriterConfig.java". If any changes have been made in the Observer Definition, remember to change the version numbers</li>
+<li>Compile the Application and create an APK.</li>
+<li>Install this App along with the the Ohmage-Phone application on required devices.</li>
+<li>Add the Ohmage usernames of the participants to the "audiosens" class in Ohmage.</li>
+<li>Open the Ohmage Phone app. Choose the correct Ohmage server and login.</li>
+<li>Open the AudioSens app. Start the app from the Settings screen. Make any changes in the configurations if required.</li>
+</ol>
