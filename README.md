@@ -58,6 +58,9 @@ The major settings of the application are:
 </ul>
 
 
+<h4>Speech/nonSpeech classifier</h4>
+The speech/non-speech classifier is based on the method mentioned in “Conversational scene analysis,” Ph.D. dissertation, Massachusetts Institute of Technology, 2002 by Sumit Basu. This method uses three features for the classification: the non-initial maximum of the normalized noisy autocorrelation, the number of autocorrelation peaks, and the normalized spectral entropy.  Since AudioSens records at 8 kHz, each frame contains 256 samples (32 milliseconds) and an overlap of 128 samples (16 milliseconds). In ~\cite{basu}, this method was found to be robust to the microphone distance and the environment. To verify this algorithm, we have manually tagged around 2 hours of random audio samples and compared the results to the results obtained by this classifier. We observe an accuracy of around 85\%. 
+
 
 <h4>Deployment Instructions</h4>
 <ol>
