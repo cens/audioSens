@@ -19,6 +19,7 @@ public abstract class BaseClassifier
 	ArrayList<Double> results;
 	String name;
 	
+	//Called when the classifier is initialized
 	public void initialize(AudioSensRecorder obj)
 	{
 		this.obj = obj;
@@ -59,7 +60,10 @@ public abstract class BaseClassifier
 		}	
 	}
 
+	//Main classification function
 	public abstract void classify(HashMap<String, BaseProcessor> resultMap);
+	
+	//Called before the Classifier would be destroyed, so as to add final/pending results
 	public abstract void complete();
 
 }

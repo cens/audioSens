@@ -94,6 +94,7 @@ public class AudioSensRecorder implements Runnable
 			}
 		}
 		
+		//Start the Processing Queue
 		processingQueue.start();
 		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 		
@@ -110,7 +111,7 @@ public class AudioSensRecorder implements Runnable
 				AudioSensConfig.ENCODINGTYPE,
 				bufferSize);
 
-		//Check if AudioRecord has initiliazed
+		//Check if AudioRecord has initialized
 		try
 		{
 			int checkCount=0;
@@ -158,6 +159,7 @@ public class AudioSensRecorder implements Runnable
 			}
 		}
 		
+		//After Recording is over
 		setRecording(false);
 		recordInstance.stop();
 		recordInstance.release();
@@ -166,6 +168,7 @@ public class AudioSensRecorder implements Runnable
 		
 		try
 		{
+			//Waits for teh Processing Queue to End
 			processingQueue.join();
 			Logger.d(LOGTAG, "Finished Processing");
 			processingQueue.writeData();

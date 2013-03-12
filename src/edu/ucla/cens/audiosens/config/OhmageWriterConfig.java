@@ -2,6 +2,7 @@ package edu.ucla.cens.audiosens.config;
 
 public class OhmageWriterConfig 
 {
+	//Observer API Related Setting
     public static final String OBSERVER_ID = "org.ohmage.probes.audioSensProbe";
     public static final int OBSERVER_VERSION = 14;
 
@@ -20,6 +21,7 @@ public class OhmageWriterConfig
     public static final String STREAM_SUMMARIZERS = "summarizers";
     public static final int STREAM_SUMMARIZERS_VERSION = 14;
 
+    //Other Settings
     public static final boolean WRITESFEATURES = true;
     public static final boolean WRITESSENSORS = true;
     public static final boolean WRITESCLASSIFIERS = true;

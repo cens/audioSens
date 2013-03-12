@@ -67,6 +67,7 @@ public class AudioSensTimeSettingsActivity extends Activity
 		tl = (TableLayout)findViewById(R.id.time_tl);
 		add_b = (Button)findViewById(R.id.add_b);
 		
+		//Loads existing time ranges
 		loadTimeRows();
 		
 		period_et.setText(mSettings.getInt(PreferencesHelper.SPECIALPERIOD, AudioSensConfig.PERIOD)+"");
@@ -214,6 +215,7 @@ public class AudioSensTimeSettingsActivity extends Activity
 		new AlertDialog.Builder(this).setTitle(title).setMessage(message).setNeutralButton("OK", null).show(); 
 	}
 	
+	//Get existing time ranges
 	private void loadTimeRows()
 	{
 		String saved = mSettings.getString(PreferencesHelper.TIMERANGE, "[]");

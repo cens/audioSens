@@ -35,6 +35,7 @@ public abstract class BaseProcessor
 		initializeResults();
 	}
 	
+	//Called to summarize the results from this processor
 	public abstract void summarize();
 	
 	public abstract void setName();
@@ -49,17 +50,19 @@ public abstract class BaseProcessor
 		return featureName; 
 	}
 	
+	//main Process function
 	public abstract void process(Object data, HashMap<String,String> options);
-	
-	public void initializeResults()
-	{
-		ArrayList<Double> arr = new ArrayList<Double>();
-		results.put(featureName, arr);
-	}
 	
 	public void process(Object data)
 	{
 		process(data, null);
+	}
+	
+	//Called Initially to initialize the Results Array
+	public void initializeResults()
+	{
+		ArrayList<Double> arr = new ArrayList<Double>();
+		results.put(featureName, arr);
 	}
 	
 	@SuppressWarnings("rawtypes")

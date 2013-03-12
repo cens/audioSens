@@ -8,6 +8,7 @@ import java.util.TimeZone;
 
 public class GeneralHelper 
 {
+	//Generate the Data Object from HH:MM
 	public static Date dateFromHourMin(final String hhmm)
 	{
 	    if (hhmm.matches("^[0-2][0-9]:[0-5][0-9]$"))

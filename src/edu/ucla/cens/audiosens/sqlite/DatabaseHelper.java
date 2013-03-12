@@ -136,7 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	}
 
 
-	// Getting contacts Count
+	// Getting Inference Count
 	public int getInferenceCount() 
 	{
 		String countQuery = "SELECT  * FROM " + TABLE_INFERENCE;

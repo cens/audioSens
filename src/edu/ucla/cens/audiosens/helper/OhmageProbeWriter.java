@@ -13,6 +13,7 @@ import org.ohmage.probemanager.ProbeWriter;
 
 import edu.ucla.cens.audiosens.config.OhmageWriterConfig;
 
+//Helper Class for Writing to Ohmage
 public class OhmageProbeWriter extends ProbeWriter 
 {
 	static final String LOGTAG = "OhmageProbeWriter";

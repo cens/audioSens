@@ -101,6 +101,7 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 		clearSpeechMode();
 	}
 	
+	//Gets the inference from the current results array
 	private boolean getInference()
 	{
 		int current = 0;
@@ -117,6 +118,7 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 		return false;
 	}
 
+	//Update the speech mode in the Shared preferences
 	private void updateSpeechMode(double secondInference)
 	{
 		if(secondInference > 0)
@@ -132,11 +134,13 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 		obj.mEditor.commit();
 	}
 
+	//Notifies the UI about the change in the Speech Mode
 	private void notifyUI(double percent)
 	{
 		obj.getService().sendSpeechInferenceBroadcast(percent);
 	}
 	
+	//Adds the current mode to the database, used for summarization
 	private void addToDatabase()
 	{
 		JSONArray jsonArray = new JSONArray((ArrayList<Double>)results);
@@ -155,6 +159,7 @@ public class VoiceActivityDetectionClassifier extends BaseClassifier
 		obj.getService().getDB().addInference(inference);
 	}
 	
+	//Stores state information in the SharedPreferences
 	private void addToPreferences()
 	{
 		boolean speech = getInference();

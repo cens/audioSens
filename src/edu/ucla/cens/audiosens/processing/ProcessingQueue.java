@@ -54,6 +54,7 @@ public class ProcessingQueue extends Thread
 		for(int i=0; i < frameSize; i++)
 			audioFrame[i] = 0;
 
+		//Initializes the Processors
 		for(String processorName : AudioSensConfig.FEATURES)
 		{
 			if(!resultMap.containsKey(processorName))
@@ -72,7 +73,7 @@ public class ProcessingQueue extends Thread
 		}
 		Logger.d(LOGTAG,"Initiliazed Processors");
 
-
+		//Initialized the Writers
 		for(String writerName : AudioSensConfig.DATAWRITERS)
 		{
 			if(!resultMap.containsKey(writerName))
@@ -91,6 +92,7 @@ public class ProcessingQueue extends Thread
 		}
 		Logger.d(LOGTAG,"Initialized Writers");
 
+		//Initialized Classifiers
 		for(String classifierName : AudioSensConfig.CLASSIFIERS)
 		{
 			if(!classifierMap.containsKey(classifierName))
@@ -133,6 +135,8 @@ public class ProcessingQueue extends Thread
 			{
 				if(startedRecording)
 				{
+					//Stops thread if a new thread has been started for the next sampling
+					//Else the phone would run out of memory
 					if(obj.mSettings.getBoolean(PreferencesHelper.RECORDSTATUS, false) && stoppedOnce)
 					{
 						Logger.w(LOGTAG, "Terminating Processing thread since new Recording started");
@@ -148,22 +152,27 @@ public class ProcessingQueue extends Thread
 
 			System.arraycopy(audioFromQueueData.data, 0, audioFrame, frameStep, frameStep);
 
+			//Sends the current frame to each processor
 			for(BaseProcessor processor : resultMap.values())
 			{
 				processor.process(audioFrame);
 				//Logger.d(LOGTAG, "Processing frame : "+processor.framesPending+"/"+queue.getQSize() + "for processor: " + processor.getName());
 			}
 
+			//Adds to the raw audio File
 			if(obj.mSettings.getBoolean(PreferencesHelper.RAWMODE, AudioSensConfig.RAWMODE_DEFAULT))
 			{
 				processRawAudio(audioFrame);
 			}
 
+			//Calls each classifier
 			for(BaseClassifier classifier : classifierMap.values())
 			{
 				classifier.classify(resultMap);
 			}
 
+			//If in Continuous Mode, Force write the data every minute
+			//Else the memory used by the Application would increase very fast
 			if(continuousMode)
 			{
 				if(forceWrite)

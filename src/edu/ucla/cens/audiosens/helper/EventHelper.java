@@ -2,10 +2,6 @@ package edu.ucla.cens.audiosens.helper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import edu.ucla.cens.audiosens.AudioSensService;
-import edu.ucla.cens.audiosens.config.AudioSensConfig;
-
 import android.content.Context;
 
 public class EventHelper 
@@ -28,6 +24,7 @@ public class EventHelper
 		}
 	}
 	
+	//Logs the Phone Booting Up event
 	public static void logBootUp(Context context, String versioNo, Boolean appEnabled)
 	{
 		JSONObject json = initObject(versioNo, "PhoneStatus", "BootingUp");
@@ -44,6 +41,7 @@ public class EventHelper
 		writeObject(context, json);
 	}
 
+	//Logs the Application Enabled event when the normal mode is on
 	public static void logNormalAppStatus(Context context, String versioNo, int period, int duration)
 	{
 		JSONObject json = initObject(versioNo, "AppStatus", "Enabled");
@@ -62,6 +60,7 @@ public class EventHelper
 		writeObject(context, json);
 	}
 
+	//Logs the Application Enabled event when the continuous mode is on
 	public static void logContinuousAppStatus(Context context, String versioNo)
 	{
 		JSONObject json = initObject(versioNo, "AppStatus", "Enabled");
@@ -78,12 +77,14 @@ public class EventHelper
 		writeObject(context, json);
 	}
 
+	//Logs when the application is disabled
 	public static void logDisableAppStatus(Context context, String versioNo)
 	{
 		JSONObject json = initObject(versioNo, "AppStatus", "Disabled");
 		writeObject(context, json);
 	}
 
+	//Logs the Settings when the app is started. Is also called when the app fails due to low memory and is auto-restarted
 	public static void logAppStart(Context context, String versioNo, JSONObject summary)
 	{
 		JSONObject json = initObject(versioNo, "AppStatus", "Starting");
@@ -98,6 +99,7 @@ public class EventHelper
 		writeObject(context, json);
 	}
 
+	//Writes to Ohmage
 	private static void writeObject(Context context, JSONObject json)
 	{
 		long timestamp;
@@ -127,6 +129,7 @@ public class EventHelper
 	}
 	
 
+	@SuppressWarnings("unused")
 	private static JSONObject initObject(String versionNo, String event)
 	{
 		return initObject(versionNo, event, null);

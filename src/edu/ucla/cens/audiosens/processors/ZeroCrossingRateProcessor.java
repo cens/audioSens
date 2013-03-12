@@ -48,6 +48,7 @@ public class ZeroCrossingRateProcessor extends BaseProcessor
 	@Override
 	public void summarize() 
 	{
+		//Returns the average ZCR in the current result List
 		tempList = results.get(featureName);
 		long sum = 0;
 		int count = 0;

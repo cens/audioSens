@@ -66,18 +66,19 @@ public class AudioSensActivity extends Activity {
 			Logger.e("Cannot get the version number");
 		}
 
+		//Used to Get BroadCasts to update the Ui
 		iFilter = new IntentFilter();
 		iFilter.addAction(AudioSensConfig.STATUSRECEIVERTAG);
 		iFilter.addAction(AudioSensConfig.INFERENCERECEIVERTAG);
 		localBoradcastManager = LocalBroadcastManager.getInstance(this);
 		registerBroadcast(true);
 		
+		//Initialized the UI
 		appStatus_tv = (TextView)findViewById(R.id.appStatus_tv);
 		recordStatus_tv = (TextView)findViewById(R.id.recordingStatus_tv);
 		version_tv = (TextView)findViewById(R.id.version_tv);
 		speechInference_tr = (TableRow)findViewById(R.id.speechPercent_tr);
 		speechInference_tv = (TextView)findViewById(R.id.speechPercent_tv);
-		
 		updateAppStatus();
 		updateRecordStatus();
 		version_tv.setText(versionNo);
@@ -135,6 +136,7 @@ public class AudioSensActivity extends Activity {
 		return false;
 	}
 
+	//Broadcast Receiever to update the UI from the Service
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() 
 	{
 		String action;

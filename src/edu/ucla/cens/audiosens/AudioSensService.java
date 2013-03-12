@@ -150,7 +150,7 @@ public class AudioSensService extends Service {
 						schedule();
 					}
 				}
-				else if(action.equals(AudioSensConfig.AUTOSTART_TAG)) 
+				else if(action.equals(AudioSensConfig.AUTOSTART_TAG)) //On Phone Bootup
 				{
 					Logger.d(LOGTAG,"Boot Alarm Received");
 					EventHelper.logBootUp(getApplicationContext(), getVersionNo(), mSettings.getBoolean(PreferencesHelper.ENABLED, false));
@@ -162,6 +162,7 @@ public class AudioSensService extends Service {
 			}
 			else
 			{
+				//When the Service is started from the Activity
 				schedule();
 			}
 		}
@@ -247,6 +248,7 @@ public class AudioSensService extends Service {
 		}
 	}
 
+	//Gets the duration of recording. Created to accomodate speech triggered change in Sampling Rates
 	public int getDuration(int period, int duration)
 	{
 		if(mSettings.getBoolean(PreferencesHelper.SPEECHTRIGGERMODE, AudioSensConfig.SPEECHTRIGGERMODE_DEFAULT))
@@ -298,6 +300,7 @@ public class AudioSensService extends Service {
 		mEditor.putBoolean(PreferencesHelper.RECORDSTATUS, true);
 		mEditor.commit();
 
+		//Notifies the UI of the Recording Start
 		sendStatusBroadcast(true, null);
 
 		recorderInstance = new AudioSensRecorder(this, duration, period, continuousMode, startTime); 
@@ -308,6 +311,7 @@ public class AudioSensService extends Service {
 		cleanup();
 	}
 
+	//Cleanup Function
 	private void cleanup()
 	{
 		Logger.d(LOGTAG,"Recording Cleanup");
@@ -335,6 +339,7 @@ public class AudioSensService extends Service {
 		releaseWakeLock();
 	}
 
+	//Checks if the App is currently recording
 	private boolean isActive()
 	{
 		return mSettings.getBoolean(PreferencesHelper.RECORDSTATUS, false);
@@ -357,6 +362,7 @@ public class AudioSensService extends Service {
 		cleanup();
 	}
 
+	//Creates the Sensors
 	private void createSensors()
 	{
 		for(String sensorName : AudioSensConfig.SENSORS)
@@ -393,6 +399,10 @@ public class AudioSensService extends Service {
 		}
 	}
 
+	//Used to adding a notification in Android
+	//Green: Current Recording
+	//Yellow: Finished Recording but still processing
+	//Red: Neither recording nor processing
 	private void setNotification(NotificationLevel notificationLevel, String title, String text)
 	{
 		NotificationCompat.Builder notificationBuilder= new NotificationCompat.Builder(this)
@@ -443,6 +453,7 @@ public class AudioSensService extends Service {
 			wakeLock.release();
 	}
 
+	//Sens information about the current Recording Status to the UI
 	private void sendStatusBroadcast(boolean recordStatus, String message)
 	{
 		Intent intent = new Intent(AudioSensConfig.STATUSRECEIVERTAG);
@@ -451,6 +462,7 @@ public class AudioSensService extends Service {
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
 
+	//Sends teh current speech inference to the UI
 	public void sendSpeechInferenceBroadcast(double percent)
 	{
 		Intent intent = new Intent(AudioSensConfig.INFERENCERECEIVERTAG);
@@ -481,6 +493,7 @@ public class AudioSensService extends Service {
 	}
 
 
+	//Checks if the current time is within the Time Ranges which have Special sampling rates
 	private boolean isSpecialMode()
 	{
 		if(mSettings.getBoolean(PreferencesHelper.SPECIALMODE, false))

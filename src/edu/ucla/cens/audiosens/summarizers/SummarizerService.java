@@ -98,23 +98,18 @@ public class SummarizerService extends Service {
 		else
 			seed = getNextSeed(seed);
 
+		//As long as seed if before current tiem, keep summarizing
+		//Next seed is current valid seed + 1 hour
 		while(isSeedValid(seed))
 		{
 			hourlySummarize(seed);
 			seed = getNextSeed(seed);
 		}
-		//TODO: Remove
-		mEditor.putLong("temp1", System.currentTimeMillis());
-		mEditor.commit();
 		releaseWakeLock();
 	}
 
 	private void hourlySummarize(long seed)
-	{
-		//TODO: remove
-		mEditor.putLong("temp2", System.currentTimeMillis());
-		mEditor.commit();
-		
+	{		
 		calendar.setTimeInMillis(seed);
 		calendar.add(Calendar.HOUR_OF_DAY, -1);
 
@@ -133,7 +128,6 @@ public class SummarizerService extends Service {
 
 		List<SpeechInferenceObject> arr = db.getIntervalInferences(start, end);
 
-		//List<SpeechInferenceObject> arr = db.getAllInferences();
 		ArrayList<Integer> inferenceArr_op = new ArrayList<Integer>();
 		ArrayList<Integer> countArr_op = new ArrayList<Integer>();
 		
@@ -222,6 +216,7 @@ public class SummarizerService extends Service {
 		}
 	}
 
+	//Checks if the time seed is before the current time
 	private boolean isSeedValid(long seed)
 	{
 		calendar.setTimeInMillis(seed);

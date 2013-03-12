@@ -25,7 +25,7 @@ public final class AudioSensConfig
 	public final static int ENCODINGTYPE = AudioFormat.ENCODING_PCM_16BIT;
 	public final static int FREQUENCY = 8000;
 	
-	//Frequency Mode
+	//Continuous Mode
 	public final static boolean CONTINUOUSMODE_DEFAULT = false;
 	public final static int CONTINUOUSMODE_ALARM = 900;	//15 minutes
 	public final static int CONTINUOUSMODE_FLUSHTIME =  60; //1 minute

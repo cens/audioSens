@@ -1,5 +1,6 @@
 package edu.ucla.cens.audiosens.helper;
 
+//Stores feature Names
 public class FeaturesList 
 {	
 	public static final String ENERGY = "Energy";

@@ -48,6 +48,9 @@ public class RawAudioFileWriter
 			return;
 		}
 		
+		//Initially, creates a file which starts with "p", On completion, this file is renamed without the "p"
+		//This is used to detect incomplete files. Incomplete files can be caused due to the App getting closed,
+		//due to reasons such as the Phone Booting or extremely low memory
 		fPath_temp=fDirPath+"/p"+frameNo+".wav";
 		fPath=fDirPath+"/"+frameNo+".wav";
 		payloadSize = 0;
@@ -110,6 +113,7 @@ public class RawAudioFileWriter
 		payloadSize += data.length;
 	}
 
+	//Converts the Short array to a byte array
 	private void convertToByteArray(short[] data)
 	{
 		if(data_byte == null || (data.length) != data_byte.length )
@@ -179,6 +183,7 @@ public class RawAudioFileWriter
 		}
 	}
 
+	//Creates the folder if not already present
 	public boolean initializeFolder()
 	{
 		if(isSDCardPresent())

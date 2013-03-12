@@ -294,6 +294,8 @@ public class AudioSensSettingsActivity extends Activity {
 	}
 
 
+	//Enables Settings when the app is turned off
+	//Disables Settings when the app is turned on
 	private void enableDisableSettings(boolean enabled)
 	{
 		if(enabled)
@@ -319,7 +321,8 @@ public class AudioSensSettingsActivity extends Activity {
 	}
 
 
-
+	//Gets the String of the Time range in the Special Sampling mode.
+	//Used for displaying in the UI
 	private String getSpecialStatus()
 	{
 		String op = "";

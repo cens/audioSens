@@ -14,6 +14,7 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
 	{
 		if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) 
 		{
+			//If autostart is configured in the Config File
 			if(AudioSensConfig.AUTOSTART)
 			{
 				Intent serviceIntent = new Intent(context, AudioSensService.class);

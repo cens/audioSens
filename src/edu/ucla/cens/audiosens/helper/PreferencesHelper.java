@@ -1,5 +1,6 @@
 package edu.ucla.cens.audiosens.helper;
 
+//Helper Class for storing SharedPreferences Names
 public class PreferencesHelper 
 {
 	public static final String ENABLED = "enabled_as";

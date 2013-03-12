@@ -37,24 +37,6 @@ public class JSONHelper {
 		}
 		return jsonObject;
 	}
-
-	/*@SuppressWarnings("unchecked")
-	public static ArrayList<JSONObject> buildAsArrayList(Object inp, long frameNo) throws JSONException
-	{
-		ArrayList<JSONObject> op = new ArrayList<JSONObject>();
-		JSONObject jsonObject;
-		if(inp instanceof HashMap)
-		{
-			for(Entry<String,Object> entry : ((HashMap<String,Object>)inp).entrySet())
-			{
-				jsonObject = build(entry.getValue());
-				jsonObject.put("feature", entry.getKey());
-				jsonObject.put("frameNo", frameNo);
-				op.add(jsonObject);
-			}
-		}
-		return op;
-	}*/
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static JSONArray buildFeaturesAsJSONArray(Object inp, Object summaries, long frameNo) throws JSONException

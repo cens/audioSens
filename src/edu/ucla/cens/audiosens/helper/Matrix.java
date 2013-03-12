@@ -8,8 +8,6 @@ import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.StreamTokenizer;
 
-import android.util.Log;
-
 /**
    Jama = Java Matrix class.
 <P>
@@ -912,6 +910,7 @@ public class Matrix
    @param input the input stream.
 	 */
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Matrix read (BufferedReader input) throws java.io.IOException {
 		StreamTokenizer tokenizer= new StreamTokenizer(input);
 
